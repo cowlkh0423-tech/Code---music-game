@@ -2,288 +2,151 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>COLOR BEAT</title>
 
-    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            background: #111;
+            color: white;
+
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        .box {
+            width: min(90%, 500px);
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #aaa;
+            margin-bottom: 35px;
+        }
+
+        button {
+            width: 100%;
+            padding: 20px;
+
+            border: none;
+            border-radius: 15px;
+
+            background: #333;
+            color: white;
+
+            font-size: 20px;
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        #status {
+            margin-top: 25px;
+            min-height: 25px;
+        }
+    </style>
 </head>
 
 <body>
 
-    <!-- =========================
-         메인 화면
-    ========================== -->
-    <section id="menuScreen" class="screen active">
+    <div class="box">
 
-        <div class="menu">
+        <h1>COLOR BEAT</h1>
 
-            <div class="logo">
-                <p>RHYTHM GAME</p>
-                <h1>COLOR BEAT</h1>
-            </div>
+        <p>음악 재생 테스트</p>
 
-            <div class="songSelect">
+        <button id="playButton">
+            ▶ LEMONADE 재생
+        </button>
 
-                <button
-                    id="lemonadeButton"
-                    class="songButton"
-                    type="button"
-                >
+        <div id="status"></div>
 
-                    <span class="songNumber">
-                        SONG 01
-                    </span>
+    </div>
 
-                    <strong>
-                        LEMONADE
-                    </strong>
 
-                    <span>
-                        aespa
-                    </span>
-
-                </button>
-
-            </div>
-
-            <p class="helpText">
-                A · S · D 키 또는 화면 버튼으로 플레이
-            </p>
-
-        </div>
-
-    </section>
-
-
-    <!-- =========================
-         게임 화면
-    ========================== -->
-    <section id="gameScreen" class="screen">
-
-        <div id="gameHeader">
-
-            <button
-                id="backButton"
-                class="backButton"
-                type="button"
-            >
-                ←
-            </button>
-
-            <div
-                id="songTitle"
-                class="songTitle"
-            >
-                LEMONADE
-            </div>
-
-            <div class="stats">
-
-                <div>
-                    <small>HIT</small>
-                    <strong id="hitCount">0</strong>
-                </div>
-
-                <div>
-                    <small>MISS</small>
-                    <strong id="missCount">0</strong>
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- 게임 필드 -->
-        <div id="gameArea">
-
-            <!-- 3개의 레인 -->
-            <div
-                class="lane laneRed"
-                data-lane="0"
-            ></div>
-
-            <div
-                class="lane laneYellow"
-                data-lane="1"
-            ></div>
-
-            <div
-                class="lane laneBlue"
-                data-lane="2"
-            ></div>
-
-
-            <!-- 레인 구분선 -->
-            <div
-                class="laneDivider divider1"
-            ></div>
-
-            <div
-                class="laneDivider divider2"
-            ></div>
-
-
-            <!-- 노트가 들어가는 곳 -->
-            <div id="noteContainer"></div>
-
-
-            <!-- 판정선 -->
-            <div id="judgeLine"></div>
-
-
-            <!-- 판정 결과 -->
-            <div id="judgeText"></div>
-
-
-            <!-- 시작 카운트다운 -->
-            <div id="countdown"></div>
-
-
-            <!-- 하단 입력 버튼 -->
-            <div id="controlArea">
-
-                <button
-                    class="controlButton red"
-                    data-lane="0"
-                    type="button"
-                >
-                    <span>RED</span>
-                    <b>A</b>
-                </button>
-
-                <button
-                    class="controlButton yellow"
-                    data-lane="1"
-                    type="button"
-                >
-                    <span>YELLOW</span>
-                    <b>S</b>
-                </button>
-
-                <button
-                    class="controlButton blue"
-                    data-lane="2"
-                    type="button"
-                >
-                    <span>BLUE</span>
-                    <b>D</b>
-                </button>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =========================
-         결과 화면
-    ========================== -->
-    <section id="resultScreen" class="screen">
-
-        <div class="result">
-
-            <p class="resultSmall">
-                SONG COMPLETE
-            </p>
-
-            <h1 id="resultTitle">
-                CLEAR
-            </h1>
-
-            <h2 id="resultSong">
-                LEMONADE
-            </h2>
-
-
-            <!-- 기록 -->
-            <div class="resultStats">
-
-                <div>
-                    <span>HIT</span>
-                    <strong id="resultHit">0</strong>
-                </div>
-
-                <div>
-                    <span>MISS</span>
-                    <strong id="resultMiss">0</strong>
-                </div>
-
-                <div>
-                    <span>ACCURACY</span>
-                    <strong id="resultAccuracy">0%</strong>
-                </div>
-
-            </div>
-
-
-            <!-- 보상 -->
-            <div id="reward">
-
-                <div id="rewardIcon">
-                    🎁
-                </div>
-
-                <strong id="rewardTitle">
-                    CLEAR!
-                </strong>
-
-                <p id="rewardMessage">
-                    보상을 획득했습니다!
-                </p>
-
-            </div>
-
-
-            <!-- 결과 버튼 -->
-            <div class="resultButtons">
-
-                <button
-                    id="retryButton"
-                    type="button"
-                >
-                    다시 하기
-                </button>
-
-                <button
-                    id="menuButton"
-                    type="button"
-                >
-                    곡 선택
-                </button>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =========================
-         음악
-    ========================== -->
-
+    <!-- 음악 -->
     <audio
         id="music"
         preload="auto"
-    ></audio>
+        src="./music/lemonade.mp3">
+    </audio>
 
 
-    <!-- =========================
-         JavaScript
-         
-         반드시 파일 위치에 맞게
-         불러온다.
-    ========================== -->
+    <script>
 
-    <script src="js/lemonade.js"></script>
-    <script src="js/game.js"></script>
+        const music =
+            document.getElementById("music");
+
+        const playButton =
+            document.getElementById("playButton");
+
+        const status =
+            document.getElementById("status");
+
+
+        playButton.addEventListener(
+            "click",
+            async function () {
+
+                try {
+
+                    await music.play();
+
+                    status.textContent =
+                        "🎵 음악이 재생되고 있습니다.";
+
+                    playButton.textContent =
+                        "⏸ 음악 재생 중";
+
+                }
+
+                catch (error) {
+
+                    console.error(error);
+
+                    status.textContent =
+                        "❌ 음악을 재생할 수 없습니다.";
+
+                }
+
+            }
+        );
+
+
+        music.addEventListener(
+            "ended",
+            function () {
+
+                status.textContent =
+                    "음악 재생이 끝났습니다.";
+
+                playButton.textContent =
+                    "▶ 다시 재생";
+
+            }
+        );
+
+    </script>
 
 </body>
 </html>
