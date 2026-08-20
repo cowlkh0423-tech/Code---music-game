@@ -1,289 +1,380 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
+/* ========================================
+   aespa - LEMONADE
+   COLOR BEAT SONG DATA
+======================================== */
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+const lemonadeSong = {
 
-    <title>COLOR BEAT</title>
+    /*
+       곡 이름
+    */
 
-    <link rel="stylesheet" href="style.css">
-</head>
+    title: "LEMONADE",
 
-<body>
 
-    <!-- =========================
-         곡 선택 화면
-    ========================== -->
+    /*
+       음악 파일
 
-    <section id="menuScreen" class="screen active">
+       GitHub의 music 폴더 안에
+       lemonade.mp3가 있어야 한다.
+    */
 
-        <h1>COLOR BEAT</h1>
+    music: "music/lemonade.mp3",
 
-        <p class="description">
-            음악에 맞춰 내려오는 원을 터치하세요
-        </p>
 
-        <div class="songList">
+    /*
+       노트 패턴
 
-            <button
-                class="songButton"
-                onclick="selectSong('lemonade')"
-            >
-                <span class="songNumber">
-                    SONG 01
-                </span>
+       lane
 
-                <span class="songTitle">
-                    LEMONADE
-                </span>
+       0 = 빨강
+       1 = 노랑
+       2 = 파랑
 
-                <span class="songArtist">
-                    aespa
-                </span>
-            </button>
 
+       color
 
-            <button
-                class="songButton"
-                onclick="selectSong('love_attack')"
-            >
-                <span class="songNumber">
-                    SONG 02
-                </span>
+       red
+       yellow
+       blue
 
-                <span class="songTitle">
-                    LOVE ATTACK
-                </span>
 
-                <span class="songArtist">
-                    RESCENE
-                </span>
-            </button>
+       time
 
+       음악이 시작된 후
+       몇 초에 판정되는지
+    */
 
-            <button
-                class="songButton"
-                onclick="selectSong('blue_valentine')"
-            >
-                <span class="songNumber">
-                    SONG 03
-                </span>
+    notes: [
 
-                <span class="songTitle">
-                    Blue Valentine
-                </span>
+        /* =========================
+           INTRO
+        ========================== */
 
-                <span class="songArtist">
-                    NMIXX
-                </span>
-            </button>
-
-        </div>
-
-    </section>
-
-
-    <!-- =========================
-         게임 화면
-    ========================== -->
-
-    <section id="gameScreen" class="screen">
-
-        <div id="gameHeader">
-
-            <button
-                id="backButton"
-                onclick="goMenu()"
-            >
-                ←
-            </button>
-
-            <div id="playingSong">
-                LEMONADE
-            </div>
-
-            <div id="gameInfo">
-                <span id="hitCount">
-                    0
-                </span>
-
-                <span>
-                    /
-                </span>
-
-                <span id="missCount">
-                    0
-                </span>
-            </div>
-
-        </div>
-
-
-        <!-- 게임 영역 -->
-
-        <div id="gameArea">
-
-            <!-- 빨강 레인 -->
-            <div
-                class="lane redLane"
-                data-lane="0"
-            ></div>
-
-            <!-- 노랑 레인 -->
-            <div
-                class="lane yellowLane"
-                data-lane="1"
-            ></div>
-
-            <!-- 파랑 레인 -->
-            <div
-                class="lane blueLane"
-                data-lane="2"
-            ></div>
-
-
-            <!-- 판정선 -->
-
-            <div id="judgeLine"></div>
-
-
-            <!-- 노트가 생성되는 곳 -->
-
-            <div id="noteContainer"></div>
-
-
-            <!-- 터치 영역 -->
-
-            <div id="touchArea">
-
-                <button
-                    class="touchButton redButton"
-                    data-lane="0"
-                    onclick="pressLane(0)"
-                >
-                    RED
-                </button>
-
-                <button
-                    class="touchButton yellowButton"
-                    data-lane="1"
-                    onclick="pressLane(1)"
-                >
-                    YELLOW
-                </button>
-
-                <button
-                    class="touchButton blueButton"
-                    data-lane="2"
-                    onclick="pressLane(2)"
-                >
-                    BLUE
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <!-- 판정 글자 -->
-
-        <div id="judgeText">
-        </div>
-
-    </section>
-
-
-    <!-- =========================
-         결과 화면
-    ========================== -->
-
-    <section id="resultScreen" class="screen">
-
-        <h2 id="resultTitle">
-            CLEAR
-        </h2>
-
-
-        <div class="resultBox">
-
-            <div class="resultRow">
-                <span>
-                    성공
-                </span>
-
-                <strong id="resultHit">
-                    0
-                </strong>
-            </div>
-
-
-            <div class="resultRow">
-                <span>
-                    MISS
-                </span>
-
-                <strong id="resultMiss">
-                    0
-                </strong>
-            </div>
-
-
-            <div class="resultRow">
-                <span>
-                    정확도
-                </span>
-
-                <strong id="resultAccuracy">
-                    0%
-                </strong>
-            </div>
-
-        </div>
-
-
-        <div id="rewardMessage">
-        </div>
-
-
-        <div class="resultButtons">
-
-            <button
-                onclick="retrySong()"
-            >
-                다시 하기
-            </button>
-
-
-            <button
-                onclick="goMenu()"
-            >
-                곡 선택
-            </button>
-
-        </div>
-
-    </section>
-
-
-    <!-- =========================
-         음악
-    ========================== -->
-
-    <audio
-        id="music"
-        preload="auto"
-    ></audio>
-
-
-    <!-- =========================
-         JavaScript
-    ========================== -->
-
-    <script src="js/game.js"></script>
-
-</body>
-</html>
+        {
+            time: 2.00,
+            lane: 0,
+            color: "red"
+        },
+
+        {
+            time: 2.45,
+            lane: 1,
+            color: "yellow"
+        },
+
+        {
+            time: 2.90,
+            lane: 2,
+            color: "blue"
+        },
+
+        {
+            time: 3.35,
+            lane: 1,
+            color: "yellow"
+        },
+
+
+        /* =========================
+           PATTERN 1
+        ========================== */
+
+        {
+            time: 3.80,
+            lane: 0,
+            color: "red"
+        },
+
+        {
+            time: 4.15,
+            lane: 1,
+            color: "yellow"
+        },
+
+        {
+            time: 4.50,
+            lane: 2,
+            color: "blue"
+        },
+
+        {
+            time: 4.85,
+            lane: 1,
+            color: "yellow"
+        },
+
+        {
+            time: 5.20,
+            lane: 0,
+            color: "red"
+        },
+
+        {
+            time: 5.55,
+            lane: 2,
+            color: "blue"
+        },
+
+        {
+            time: 5.90,
+            lane: 1,
+            color: "yellow"
+        },
+
+        {
+            time: 6.25,
+            lane: 0,
+            color: "red"
+        },
+
+
+        /* =========================
+           PATTERN 2
+        ========================== */
+
+        {
+            time: 6.65,
+            lane: 2,
+            color: "blue"
+        },
+
+        {
+            time: 6.98,
+            lane: 1,
+            color: "yellow"
+        },
+
+        {
+            time: 7.31,
+            lane: 0,
+            color: "red"
+        },
+
+        {
+            time: 7.64,
+            lane: 1,
+            color: "yellow"
+        },
+
+        {
+            time: 7.97,
+            lane: 2,
+            color: "blue"
+        },
+
+        {
+            time: 8.30,
+            lane: 0,
+            color: "red"
+        },
+
+        {
+            time: 8.63,
+            lane: 1,
+            color: "yellow"
+        },
+
+        {
+            time: 8.96,
+            lane: 2,
+            color: "blue"
+        },
+
+
+        /* =========================
+           PATTERN 3
+        ========================== */
+
+        {
+            time: 9.30,
+            lane: 0,
+            color: "red"
+        },
+
+        {
+            time: 9.60,
+            lane: 1,
+            color: "yellow"
+        },
+
+        {
+            time: 9.90,
+            lane: 2,
+            color: "blue"
+        },
+
+        {
+            time: 10.20,
+            lane: 1,
+            color: "yellow"
+        },
+
+        {
+            time: 10.50,
+            lane: 0,
+            color: "red"
+        },
+
+        {
+            time: 10.80,
+            lane: 2,
+            color: "blue"
+        },
+
+        {
+            time: 11.10,
+            lane: 1,
+            color: "yellow"
+        },
+
+        {
+            time: 11.40,
+            lane: 0,
+            color: "red"
+        },
+
+
+        /* =========================
+           빠른 패턴
+        ========================== */
+
+        {
+            time: 11.72,
+            lane: 0,
+            color: "red"
+        },
+
+        {
+            time: 11.96,
+            lane: 1,
+            color: "yellow"
+        },
+
+        {
+            time: 12.20,
+            lane: 2,
+            color: "blue"
+        },
+
+        {
+            time: 12.44,
+            lane: 1,
+            color: "yellow"
+        },
+
+        {
+            time: 12.68,
+            lane: 0,
+            color: "red"
+        },
+
+        {
+            time: 12.92,
+            lane: 2,
+            color: "blue"
+        },
+
+        {
+            time: 13.16,
+            lane: 1,
+            color: "yellow"
+        },
+
+        {
+            time: 13.40,
+            lane: 0,
+            color: "red"
+        },
+
+
+        /* =========================
+           동시 노트
+        ========================== */
+
+        {
+            time: 13.80,
+            lane: 0,
+            color: "red"
+        },
+
+        {
+            time: 13.80,
+            lane: 2,
+            color: "blue"
+        },
+
+        {
+            time: 14.25,
+            lane: 1,
+            color: "yellow"
+        },
+
+        {
+            time: 14.70,
+            lane: 0,
+            color: "red"
+        },
+
+        {
+            time: 14.70,
+            lane: 2,
+            color: "blue"
+        },
+
+
+        /* =========================
+           테스트용 마지막 구간
+        ========================== */
+
+        {
+            time: 15.15,
+            lane: 1,
+            color: "yellow"
+        },
+
+        {
+            time: 15.48,
+            lane: 0,
+            color: "red"
+        },
+
+        {
+            time: 15.81,
+            lane: 2,
+            color: "blue"
+        },
+
+        {
+            time: 16.14,
+            lane: 1,
+            color: "yellow"
+        },
+
+        {
+            time: 16.47,
+            lane: 0,
+            color: "red"
+        },
+
+        {
+            time: 16.80,
+            lane: 2,
+            color: "blue"
+        },
+
+        {
+            time: 17.13,
+            lane: 1,
+            color: "yellow"
+        },
+
+        {
+            time: 17.46,
+            lane: 0,
+            color: "red"
+        }
+
+    ]
+
+};
