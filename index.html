@@ -1,0 +1,2258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0,
+               maximum-scale=1.0, user-scalable=no">
+
+<title>COLOR BEAT</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #07070b;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+/* =========================
+   화면
+========================= */
+
+.screen {
+    position: fixed;
+    inset: 0;
+    display: none;
+}
+
+.screen.active {
+    display: flex;
+}
+
+/* =========================
+   메뉴
+========================= */
+
+#menu {
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    background:
+        radial-gradient(
+            circle at center,
+            #20203b 0%,
+            #0b0b12 55%,
+            #050507 100%
+        );
+}
+
+.logo {
+    font-size: clamp(42px, 10vw, 80px);
+    font-weight: 900;
+    letter-spacing: 8px;
+
+    text-shadow:
+        0 0 15px rgba(255,255,255,.3),
+        0 0 40px rgba(80,120,255,.3);
+
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    color: #999;
+    margin-bottom: 35px;
+    font-size: 15px;
+}
+
+.song-list {
+    width: min(90%, 600px);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.song-button {
+    width: 100%;
+    min-height: 85px;
+
+    border: 1px solid #353543;
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #171720,
+            #0e0e15
+        );
+
+    color: white;
+    text-align: left;
+
+    padding: 18px 22px;
+
+    cursor: pointer;
+
+    transition:
+        transform .12s,
+        border-color .12s,
+        background .12s;
+}
+
+.song-button:hover {
+    transform: scale(1.02);
+    border-color: #777;
+    background: #1c1c28;
+}
+
+.song-button:active {
+    transform: scale(.97);
+}
+
+.song-number {
+    display: block;
+    color: #777;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.song-name {
+    display: block;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.song-artist {
+    display: block;
+    color: #999;
+    margin-top: 5px;
+}
+
+/* =========================
+   게임
+========================= */
+
+#game {
+    flex-direction: column;
+    background: #050509;
+}
+
+#top {
+    position: fixed;
+
+    left: 0;
+    right: 0;
+    top: 0;
+
+    height: 62px;
+
+    z-index: 100;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 18px;
+
+    background: rgba(5,5,9,.9);
+    border-bottom: 1px solid #222;
+}
+
+#songTitle {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+#gameStatus {
+    color: #aaa;
+    font-size: 13px;
+}
+
+/* =========================
+   플레이 영역
+========================= */
+
+#playArea {
+    position: absolute;
+
+    top: 62px;
+    bottom: 0;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    width: min(96vw, 650px);
+
+    overflow: hidden;
+
+    border-left: 1px solid #24242d;
+    border-right: 1px solid #24242d;
+
+    background:
+        linear-gradient(
+            90deg,
+
+            rgba(255,50,60,.045) 0%,
+            rgba(255,50,60,.045) 33.333%,
+
+            rgba(255,220,40,.045) 33.333%,
+            rgba(255,220,40,.045) 66.666%,
+
+            rgba(50,140,255,.045) 66.666%,
+            rgba(50,140,255,.045) 100%
+        );
+}
+
+/* 레인 */
+
+.lane {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+
+    width: 33.333%;
+
+    border-right: 1px solid rgba(255,255,255,.055);
+}
+
+.lane:nth-child(1) {
+    left: 0;
+}
+
+.lane:nth-child(2) {
+    left: 33.333%;
+}
+
+.lane:nth-child(3) {
+    left: 66.666%;
+
+    border-right: none;
+}
+
+/* =========================
+   판정선
+========================= */
+
+#judgeLine {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+
+    bottom: 125px;
+
+    height: 5px;
+
+    background: white;
+
+    box-shadow:
+        0 0 10px white,
+        0 0 25px rgba(255,255,255,.5);
+
+    z-index: 30;
+}
+
+/* =========================
+   키
+========================= */
+
+#keys {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 20px;
+
+    height: 85px;
+
+    display: flex;
+
+    z-index: 40;
+}
+
+.key {
+    width: 33.333%;
+
+    margin: 4px;
+
+    border-radius: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 28px;
+    font-weight: 900;
+
+    border: 1px solid rgba(255,255,255,.1);
+
+    background: rgba(255,255,255,.035);
+
+    transition:
+        transform .05s,
+        background .05s;
+}
+
+.key.red {
+    color: #ff4d58;
+}
+
+.key.yellow {
+    color: #ffe348;
+}
+
+.key.blue {
+    color: #4c9cff;
+}
+
+.key.pressed {
+    transform: scale(.92);
+    background: rgba(255,255,255,.2);
+}
+
+/* =========================
+   노트
+========================= */
+
+.note {
+    position: absolute;
+
+    width: 54px;
+    height: 54px;
+
+    border-radius: 50%;
+
+    transform: translateX(-50%);
+
+    z-index: 20;
+
+    box-shadow:
+        0 0 10px currentColor,
+        0 0 24px currentColor;
+}
+
+.note.red {
+    background: #ff3948;
+    color: #ff3948;
+}
+
+.note.yellow {
+    background: #ffdb35;
+    color: #ffdb35;
+}
+
+.note.blue {
+    background: #368dff;
+    color: #368dff;
+}
+
+/* =========================
+   판정
+========================= */
+
+#judgeText {
+    position: fixed;
+
+    left: 50%;
+    bottom: 215px;
+
+    transform: translateX(-50%);
+
+    z-index: 200;
+
+    font-size: 32px;
+    font-weight: 900;
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+#judgeText.show {
+    animation: judge .32s ease-out;
+}
+
+@keyframes judge {
+
+    0% {
+        opacity: 1;
+        transform:
+            translate(-50%, 10px)
+            scale(.8);
+    }
+
+    30% {
+        opacity: 1;
+        transform:
+            translate(-50%, 0)
+            scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform:
+            translate(-50%, -30px)
+            scale(1.05);
+    }
+}
+
+.perfect {
+    color: white;
+}
+
+.good {
+    color: #ffe34d;
+}
+
+.miss {
+    color: #ff4d55;
+}
+
+/* =========================
+   시작
+========================= */
+
+#startOverlay {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 500;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(0,0,0,.65);
+
+    font-size: 70px;
+    font-weight: 900;
+}
+
+#startOverlay.show {
+    display: flex;
+}
+
+/* =========================
+   결과
+========================= */
+
+#result {
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    background:
+        radial-gradient(
+            circle at center,
+            #20203a,
+            #08080d 70%
+        );
+}
+
+#resultTitle {
+    font-size: clamp(50px, 12vw, 80px);
+    font-weight: 900;
+
+    margin-bottom: 25px;
+}
+
+#resultTitle.clear {
+    color: #5cff8b;
+
+    text-shadow:
+        0 0 20px rgba(92,255,139,.4);
+}
+
+#resultTitle.failed {
+    color: #ff5555;
+
+    text-shadow:
+        0 0 20px rgba(255,85,85,.4);
+}
+
+.resultBox {
+    width: min(90%, 450px);
+
+    padding: 25px;
+
+    border-radius: 18px;
+
+    border: 1px solid #292936;
+
+    background: rgba(255,255,255,.05);
+
+    margin-bottom: 22px;
+}
+
+.resultRow {
+    display: flex;
+    justify-content: space-between;
+
+    padding: 9px 0;
+
+    color: #aaa;
+}
+
+.resultRow strong {
+    color: white;
+}
+
+.resultButtons {
+    display: flex;
+    gap: 12px;
+}
+
+.resultButton {
+    min-width: 145px;
+
+    padding: 14px 20px;
+
+    border-radius: 12px;
+
+    border: 1px solid #444;
+
+    background: #16161f;
+
+    color: white;
+
+    font-size: 16px;
+
+    cursor: pointer;
+}
+
+.resultButton:hover {
+    background: #252531;
+}
+
+/* =========================
+   모바일
+========================= */
+
+@media(max-width:600px) {
+
+    #top {
+        padding: 0 12px;
+    }
+
+    #songTitle {
+        font-size: 13px;
+    }
+
+    #gameStatus {
+        font-size: 11px;
+    }
+
+    .note {
+        width: 48px;
+        height: 48px;
+    }
+
+    #judgeLine {
+        bottom: 115px;
+    }
+
+    #keys {
+        height: 70px;
+        bottom: 20px;
+    }
+
+    .key {
+        font-size: 23px;
+    }
+
+    #judgeText {
+        bottom: 195px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================================================
+     곡 선택
+========================================================= -->
+
+<div id="menu" class="screen active">
+
+    <div class="logo">
+        COLOR BEAT
+    </div>
+
+    <div class="subtitle">
+        음악의 박자에 맞춰 A · S · D
+    </div>
+
+    <div class="song-list">
+
+        <button
+            class="song-button"
+            onclick="startSong('loveAttack')">
+
+            <span class="song-number">
+                SONG 01
+            </span>
+
+            <span class="song-name">
+                LOVE ATTACK
+            </span>
+
+            <span class="song-artist">
+                RESCENE
+            </span>
+
+        </button>
+
+
+        <button
+            class="song-button"
+            onclick="startSong('lemonade')">
+
+            <span class="song-number">
+                SONG 02
+            </span>
+
+            <span class="song-name">
+                LEMONADE
+            </span>
+
+            <span class="song-artist">
+                aespa
+            </span>
+
+        </button>
+
+
+        <button
+            class="song-button"
+            onclick="startSong('blueValentine')">
+
+            <span class="song-number">
+                SONG 03
+            </span>
+
+            <span class="song-name">
+                Blue Valentine
+            </span>
+
+            <span class="song-artist">
+                NMIXX
+            </span>
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     게임
+========================================================= -->
+
+<div id="game" class="screen">
+
+    <div id="top">
+
+        <div id="songTitle">
+            COLOR BEAT
+        </div>
+
+        <div id="gameStatus">
+            성공 0 · MISS 0
+        </div>
+
+    </div>
+
+
+    <div id="playArea">
+
+        <div class="lane"></div>
+        <div class="lane"></div>
+        <div class="lane"></div>
+
+        <div id="judgeLine"></div>
+
+        <div id="keys">
+
+            <div
+                class="key red"
+                data-key="a">
+                A
+            </div>
+
+            <div
+                class="key yellow"
+                data-key="s">
+                S
+            </div>
+
+            <div
+                class="key blue"
+                data-key="d">
+                D
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div id="judgeText"></div>
+
+</div>
+
+
+<!-- =========================================================
+     시작 표시
+========================================================= -->
+
+<div id="startOverlay">
+    START
+</div>
+
+
+<!-- =========================================================
+     결과
+========================================================= -->
+
+<div id="result" class="screen">
+
+    <div id="resultTitle">
+        CLEAR!
+    </div>
+
+    <div class="resultBox">
+
+        <div class="resultRow">
+            <span>곡</span>
+            <strong id="resultSong">-</strong>
+        </div>
+
+        <div class="resultRow">
+            <span>성공</span>
+            <strong id="resultHits">0</strong>
+        </div>
+
+        <div class="resultRow">
+            <span>MISS</span>
+            <strong id="resultMisses">0</strong>
+        </div>
+
+        <div class="resultRow">
+            <span>정확도</span>
+            <strong id="resultAccuracy">0%</strong>
+        </div>
+
+    </div>
+
+
+    <div class="resultButtons">
+
+        <button
+            class="resultButton"
+            onclick="retrySong()">
+            다시 도전
+        </button>
+
+        <button
+            class="resultButton"
+            onclick="goMenu()">
+            곡 선택
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   음악 설정
+========================================================= */
+
+const songs = {
+
+    loveAttack: {
+        title: "LOVE ATTACK",
+        artist: "RESCENE",
+        file: "music/love_attack.mp3"
+    },
+
+    lemonade: {
+        title: "LEMONADE",
+        artist: "aespa",
+        file: "music/lemonade.mp3"
+    },
+
+    blueValentine: {
+        title: "Blue Valentine",
+        artist: "NMIXX",
+        file: "music/blue_valentine.mp3"
+    }
+
+};
+
+
+/* =========================================================
+   게임 변수
+========================================================= */
+
+let selectedSong = null;
+
+let audio = new Audio();
+
+let audioContext = null;
+
+let analyser = null;
+
+let sourceNode = null;
+
+let gameRunning = false;
+
+let animationFrame = null;
+
+let activeNotes = [];
+
+let hitCount = 0;
+
+let missCount = 0;
+
+let lastBeatTime = -1;
+
+let previousEnergy = 0;
+
+let songStarted = false;
+
+let endedHandled = false;
+
+
+/* =========================================================
+   게임 설정
+========================================================= */
+
+/*
+    원이 판정선까지 내려오는 시간.
+
+    값을 크게 하면:
+    원이 위에서 더 오래 내려옴.
+
+    값을 작게 하면:
+    원이 빠르게 내려옴.
+*/
+
+const NOTE_TRAVEL_TIME = 1.45;
+
+
+/*
+    판정 범위
+*/
+
+const PERFECT_WINDOW = 0.075;
+
+const GOOD_WINDOW = 0.17;
+
+
+/*
+    너무 많은 원이 생성되는 것을 방지.
+*/
+
+const MIN_BEAT_INTERVAL = 0.18;
+
+
+/*
+    게임 클리어 조건.
+
+    90% 이상 성공하면 CLEAR.
+*/
+
+const CLEAR_RATE = 0.90;
+
+
+/* =========================================================
+   화면 변경
+========================================================= */
+
+function showScreen(id) {
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(screen => {
+
+            screen.classList.remove("active");
+
+        });
+
+    document
+        .getElementById(id)
+        .classList.add("active");
+}
+
+
+/* =========================================================
+   음악 시작
+========================================================= */
+
+function startSong(songKey) {
+
+    selectedSong = songKey;
+
+    const song = songs[songKey];
+
+    /*
+        먼저 화면을 바꾼다.
+    */
+
+    showScreen("game");
+
+    document.getElementById("songTitle").textContent =
+        song.title + " · " + song.artist;
+
+
+    /*
+        기존 음악 정리
+    */
+
+    stopGame();
+
+
+    /*
+        음악 파일 설정
+    */
+
+    audio = new Audio();
+
+    audio.src = song.file;
+
+    audio.preload = "auto";
+
+    audio.crossOrigin = "anonymous";
+
+
+    /*
+        음악이 끝났을 때
+    */
+
+    audio.addEventListener(
+        "ended",
+        finishGame
+    );
+
+
+    /*
+        모바일 브라우저에서 중요한 부분.
+
+        곡 선택 버튼을 누른 순간
+        바로 play()를 호출한다.
+    */
+
+    prepareAudio();
+
+
+    /*
+        게임 시작
+    */
+
+    gameRunning = true;
+
+    hitCount = 0;
+
+    missCount = 0;
+
+    activeNotes = [];
+
+    previousEnergy = 0;
+
+    lastBeatTime = -10;
+
+    endedHandled = false;
+
+    songStarted = false;
+
+
+    updateStatus();
+
+
+    /*
+        음악을 즉시 시작.
+    */
+
+    const playPromise = audio.play();
+
+
+    if (playPromise !== undefined) {
+
+        playPromise
+            .then(() => {
+
+                songStarted = true;
+
+                showStart();
+
+                requestAnimationFrame(gameLoop);
+
+            })
+            .catch(error => {
+
+                console.log(
+                    "음악 재생 오류:",
+                    error
+                );
+
+                alert(
+                    "음악을 재생할 수 없습니다.\n\n" +
+                    "GitHub의 music 폴더에\n" +
+                    "MP3 파일 이름이 정확한지 확인해주세요."
+                );
+
+                goMenu();
+
+            });
+
+    }
+
+}
+
+
+/* =========================================================
+   Web Audio 분석기
+========================================================= */
+
+function prepareAudio() {
+
+    /*
+        이미 AudioContext가 있다면
+        다시 만들지 않는다.
+    */
+
+    if (!audioContext) {
+
+        audioContext =
+            new (
+                window.AudioContext ||
+                window.webkitAudioContext
+            )();
+
+    }
+
+
+    if (
+        audioContext.state === "suspended"
+    ) {
+
+        audioContext.resume();
+
+    }
+
+
+    /*
+        audio → analyser
+
+        음악을 분석하기 위해
+        Web Audio API를 연결한다.
+    */
+
+    try {
+
+        sourceNode =
+            audioContext.createMediaElementSource(
+                audio
+            );
+
+        analyser =
+            audioContext.createAnalyser();
+
+        analyser.fftSize = 1024;
+
+        analyser.smoothingTimeConstant = 0.65;
+
+        sourceNode.connect(analyser);
+
+        analyser.connect(
+            audioContext.destination
+        );
+
+    } catch (error) {
+
+        /*
+            같은 audio element를 다시 연결하려고
+            하는 경우 방어.
+        */
+
+        console.log(
+            "Audio analyser:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   START 표시
+========================================================= */
+
+function showStart() {
+
+    const overlay =
+        document.getElementById(
+            "startOverlay"
+        );
+
+    overlay.classList.add("show");
+
+    setTimeout(() => {
+
+        overlay.classList.remove(
+            "show"
+        );
+
+    }, 650);
+
+}
+
+
+/* =========================================================
+   음악 실시간 분석
+========================================================= */
+
+function analyseMusic() {
+
+    if (!analyser) {
+        return null;
+    }
+
+
+    const bufferLength =
+        analyser.frequencyBinCount;
+
+
+    const data =
+        new Uint8Array(bufferLength);
+
+
+    analyser.getByteFrequencyData(data);
+
+
+    /*
+        낮은 음역
+        중간 음역
+        높은 음역
+    */
+
+    let low = 0;
+
+    let mid = 0;
+
+    let high = 0;
+
+
+    const lowEnd =
+        Math.floor(bufferLength * 0.12);
+
+    const midEnd =
+        Math.floor(bufferLength * 0.45);
+
+
+    for (
+        let i = 0;
+        i < bufferLength;
+        i++
+    ) {
+
+        const value = data[i];
+
+        if (i < lowEnd) {
+
+            low += value;
+
+        } else if (i < midEnd) {
+
+            mid += value;
+
+        } else {
+
+            high += value;
+
+        }
+
+    }
+
+
+    low /= Math.max(lowEnd, 1);
+
+    mid /=
+        Math.max(
+            midEnd - lowEnd,
+            1
+        );
+
+    high /=
+        Math.max(
+            bufferLength - midEnd,
+            1
+        );
+
+
+    /*
+        전체 에너지
+    */
+
+    const energy =
+        low * 0.45 +
+        mid * 0.35 +
+        high * 0.20;
+
+
+    return {
+        low,
+        mid,
+        high,
+        energy
+    };
+
+}
+
+
+/* =========================================================
+   음악 → 색깔
+========================================================= */
+
+function chooseColor(data) {
+
+    /*
+        가장 강한 주파수 영역을
+        색으로 변환한다.
+    */
+
+    if (
+        data.low >= data.mid &&
+        data.low >= data.high
+    ) {
+
+        return "red";
+
+    }
+
+
+    if (
+        data.mid >= data.low &&
+        data.mid >= data.high
+    ) {
+
+        return "yellow";
+
+    }
+
+
+    return "blue";
+
+}
+
+
+/* =========================================================
+   음악 → 비트 감지
+========================================================= */
+
+function detectBeat(data, currentTime) {
+
+    if (!data) {
+        return false;
+    }
+
+
+    /*
+        현재 에너지가 이전보다
+        충분히 증가했는지 확인.
+    */
+
+    const increase =
+        data.energy -
+        previousEnergy;
+
+
+    previousEnergy =
+        previousEnergy * 0.92 +
+        data.energy * 0.08;
+
+
+    /*
+        너무 조용한 구간에서는
+        노트를 만들지 않는다.
+    */
+
+    if (data.energy < 18) {
+        return false;
+    }
+
+
+    /*
+        에너지 상승폭.
+
+        이 값을 낮추면
+        노트가 많이 나온다.
+
+        높이면
+        노트가 적게 나온다.
+    */
+
+    const threshold = 7;
+
+
+    if (increase < threshold) {
+        return false;
+    }
+
+
+    /*
+        너무 빠르게 연속 생성되는 것을 방지.
+    */
+
+    if (
+        currentTime -
+        lastBeatTime <
+        MIN_BEAT_INTERVAL
+    ) {
+
+        return false;
+
+    }
+
+
+    lastBeatTime = currentTime;
+
+    return true;
+
+}
+
+
+/* =========================================================
+   게임 루프
+========================================================= */
+
+function gameLoop() {
+
+    if (!gameRunning) {
+        return;
+    }
+
+
+    if (
+        !audio ||
+        audio.paused
+    ) {
+
+        animationFrame =
+            requestAnimationFrame(
+                gameLoop
+            );
+
+        return;
+
+    }
+
+
+    const currentTime =
+        audio.currentTime;
+
+
+    /*
+        음악 분석
+    */
+
+    const musicData =
+        analyseMusic();
+
+
+    /*
+        비트 감지
+    */
+
+    if (
+        musicData &&
+        detectBeat(
+            musicData,
+            currentTime
+        )
+    ) {
+
+        const color =
+            chooseColor(
+                musicData
+            );
+
+
+        /*
+            지금 음악에서 비트가 감지되었으므로
+            원을 생성한다.
+
+            원은 판정선에 도착하기까지
+            NOTE_TRAVEL_TIME만큼 걸린다.
+        */
+
+        createNote(
+            color,
+            currentTime
+        );
+
+    }
+
+
+    /*
+        기존 원 움직이기
+    */
+
+    updateNotes(currentTime);
+
+
+    /*
+        다음 프레임
+    */
+
+    animationFrame =
+        requestAnimationFrame(
+            gameLoop
+        );
+
+}
+
+
+/* =========================================================
+   원 생성
+========================================================= */
+
+function createNote(
+    color,
+    hitTime
+) {
+
+    const playArea =
+        document.getElementById(
+            "playArea"
+        );
+
+
+    const note =
+        document.createElement(
+            "div"
+        );
+
+
+    note.className =
+        "note " + color;
+
+
+    /*
+        레인
+    */
+
+    let lane = 0;
+
+
+    if (color === "red") {
+
+        lane = 0;
+
+    } else if (
+        color === "yellow"
+    ) {
+
+        lane = 1;
+
+    } else {
+
+        lane = 2;
+
+    }
+
+
+    /*
+        X 위치
+    */
+
+    const laneWidth =
+        playArea.clientWidth / 3;
+
+
+    const x =
+        laneWidth * lane +
+        laneWidth / 2;
+
+
+    note.style.left =
+        x + "px";
+
+
+    /*
+        노트 데이터
+    */
+
+    note.dataset.color =
+        color;
+
+    note.dataset.lane =
+        lane;
+
+    note.dataset.hitTime =
+        hitTime;
+
+    note.dataset.hit =
+        "false";
+
+
+    /*
+        처음 위치
+    */
+
+    note.style.top =
+        "-70px";
+
+
+    playArea.appendChild(
+        note
+    );
+
+
+    activeNotes.push(
+        note
+    );
+
+}
+
+
+/* =========================================================
+   원 이동
+========================================================= */
+
+function updateNotes(currentTime) {
+
+    const playArea =
+        document.getElementById(
+            "playArea"
+        );
+
+
+    const judgeLine =
+        document.getElementById(
+            "judgeLine"
+        );
+
+
+    const startY =
+        -70;
+
+
+    const endY =
+        judgeLine.offsetTop - 27;
+
+
+    for (
+        let i =
+            activeNotes.length - 1;
+        i >= 0;
+        i--
+    ) {
+
+        const note =
+            activeNotes[i];
+
+
+        if (
+            note.dataset.hit ===
+            "true"
+        ) {
+
+            continue;
+
+        }
+
+
+        const hitTime =
+            Number(
+                note.dataset.hitTime
+            );
+
+
+        /*
+            음악의 현재 시간이
+            판정 시각에 얼마나 가까운지
+        */
+
+        const timeUntilHit =
+            hitTime -
+            currentTime;
+
+
+        /*
+            화면에서의 진행률
+        */
+
+        const progress =
+            1 -
+            (
+                timeUntilHit /
+                NOTE_TRAVEL_TIME
+            );
+
+
+        const y =
+            startY +
+            (
+                endY -
+                startY
+            ) *
+            progress;
+
+
+        note.style.top =
+            y + "px";
+
+
+        /*
+            판정선을 지나갔는데
+            입력하지 않았다면 MISS
+        */
+
+        if (
+            currentTime -
+            hitTime >
+            GOOD_WINDOW
+        ) {
+
+            missNote(
+                note
+            );
+
+            activeNotes.splice(
+                i,
+                1
+            );
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   키보드
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        const key =
+            event.key.toLowerCase();
+
+
+        if (
+            key !== "a" &&
+            key !== "s" &&
+            key !== "d"
+        ) {
+
+            return;
+
+        }
+
+
+        if (!gameRunning) {
+            return;
+        }
+
+
+        pressKey(key);
+
+
+        event.preventDefault();
+
+    }
+);
+
+
+/* =========================================================
+   터치
+========================================================= */
+
+document
+    .querySelectorAll(".key")
+    .forEach(
+        button => {
+
+            button.addEventListener(
+                "pointerdown",
+                event => {
+
+                    if (
+                        !gameRunning
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    const key =
+                        button.dataset.key;
+
+
+                    pressKey(
+                        key
+                    );
+
+
+                    event.preventDefault();
+
+                }
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   키 입력
+========================================================= */
+
+function pressKey(key) {
+
+    let lane = 0;
+
+
+    if (key === "a") {
+
+        lane = 0;
+
+    } else if (
+        key === "s"
+    ) {
+
+        lane = 1;
+
+    } else {
+
+        lane = 2;
+
+    }
+
+
+    /*
+        버튼 애니메이션
+    */
+
+    const keyElement =
+        document.querySelector(
+            `.key[data-key="${key}"]`
+        );
+
+
+    if (keyElement) {
+
+        keyElement.classList.add(
+            "pressed"
+        );
+
+
+        setTimeout(
+            () => {
+
+                keyElement.classList.remove(
+                    "pressed"
+                );
+
+            },
+            70
+        );
+
+    }
+
+
+    /*
+        가장 가까운 원 찾기
+    */
+
+    const currentTime =
+        audio.currentTime;
+
+
+    let target = null;
+
+    let smallestDifference =
+        Infinity;
+
+
+    for (
+        const note
+        of activeNotes
+    ) {
+
+        if (
+            note.dataset.hit ===
+            "true"
+        ) {
+
+            continue;
+
+        }
+
+
+        if (
+            Number(
+                note.dataset.lane
+            ) !== lane
+        ) {
+
+            continue;
+
+        }
+
+
+        const difference =
+            Math.abs(
+                currentTime -
+                Number(
+                    note.dataset.hitTime
+                )
+            );
+
+
+        if (
+            difference <
+            smallestDifference
+        ) {
+
+            smallestDifference =
+                difference;
+
+            target =
+                note;
+
+        }
+
+    }
+
+
+    /*
+        판정
+    */
+
+    if (
+        target &&
+        smallestDifference <=
+        GOOD_WINDOW
+    ) {
+
+        if (
+            smallestDifference <=
+            PERFECT_WINDOW
+        ) {
+
+            hitNote(
+                target,
+                "PERFECT"
+            );
+
+        } else {
+
+            hitNote(
+                target,
+                "GOOD"
+            );
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   HIT
+========================================================= */
+
+function hitNote(
+    note,
+    result
+) {
+
+    if (
+        note.dataset.hit ===
+        "true"
+    ) {
+
+        return;
+
+    }
+
+
+    note.dataset.hit =
+        "true";
+
+
+    hitCount++;
+
+
+    showJudge(
+        result,
+        result === "PERFECT"
+            ? "perfect"
+            : "good"
+    );
+
+
+    updateStatus();
+
+
+    note.remove();
+
+
+    const index =
+        activeNotes.indexOf(
+            note
+        );
+
+
+    if (
+        index !== -1
+    ) {
+
+        activeNotes.splice(
+            index,
+            1
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   MISS
+========================================================= */
+
+function missNote(
+    note
+) {
+
+    if (
+        note.dataset.hit ===
+        "true"
+    ) {
+
+        return;
+
+    }
+
+
+    note.dataset.hit =
+        "true";
+
+
+    missCount++;
+
+
+    showJudge(
+        "MISS",
+        "miss"
+    );
+
+
+    updateStatus();
+
+
+    note.remove();
+
+}
+
+
+/* =========================================================
+   판정 표시
+========================================================= */
+
+function showJudge(
+    text,
+    className
+) {
+
+    const judge =
+        document.getElementById(
+            "judgeText"
+        );
+
+
+    judge.className = "";
+
+    judge.textContent =
+        text;
+
+
+    void judge.offsetWidth;
+
+
+    judge.classList.add(
+        "show",
+        className
+    );
+
+}
+
+
+/* =========================================================
+   상태
+========================================================= */
+
+function updateStatus() {
+
+    document.getElementById(
+        "gameStatus"
+    ).textContent =
+        "성공 " +
+        hitCount +
+        " · MISS " +
+        missCount;
+
+}
+
+
+/* =========================================================
+   게임 종료
+========================================================= */
+
+function finishGame() {
+
+    if (
+        endedHandled
+    ) {
+
+        return;
+
+    }
+
+
+    endedHandled = true;
+
+    gameRunning = false;
+
+
+    if (
+        animationFrame
+    ) {
+
+        cancelAnimationFrame(
+            animationFrame
+        );
+
+        animationFrame =
+            null;
+
+    }
+
+
+    if (audio) {
+
+        audio.pause();
+
+    }
+
+
+    /*
+        남은 원 정리
+    */
+
+    activeNotes.forEach(
+        note => note.remove()
+    );
+
+
+    activeNotes = [];
+
+
+    /*
+        정확도
+    */
+
+    const total =
+        hitCount +
+        missCount;
+
+
+    let accuracy = 0;
+
+
+    if (total > 0) {
+
+        accuracy =
+            hitCount /
+            total;
+
+    }
+
+
+    const percentage =
+        Math.round(
+            accuracy * 100
+        );
+
+
+    const clear =
+        accuracy >=
+        CLEAR_RATE;
+
+
+    /*
+        결과 화면
+    */
+
+    const title =
+        document.getElementById(
+            "resultTitle"
+        );
+
+
+    title.textContent =
+        clear
+            ? "CLEAR!"
+            : "FAILED";
+
+
+    title.className =
+        clear
+            ? "clear"
+            : "failed";
+
+
+    document.getElementById(
+        "resultSong"
+    ).textContent =
+        songs[
+            selectedSong
+        ].title;
+
+
+    document.getElementById(
+        "resultHits"
+    ).textContent =
+        hitCount;
+
+
+    document.getElementById(
+        "resultMisses"
+    ).textContent =
+        missCount;
+
+
+    document.getElementById(
+        "resultAccuracy"
+    ).textContent =
+        percentage +
+        "%";
+
+
+    showScreen(
+        "result"
+    );
+
+}
+
+
+/* =========================================================
+   다시하기
+========================================================= */
+
+function retrySong() {
+
+    startSong(
+        selectedSong
+    );
+
+}
+
+
+/* =========================================================
+   메뉴
+========================================================= */
+
+function goMenu() {
+
+    stopGame();
+
+    showScreen(
+        "menu"
+    );
+
+}
+
+
+/* =========================================================
+   게임 정지
+========================================================= */
+
+function stopGame() {
+
+    gameRunning = false;
+
+
+    if (
+        animationFrame
+    ) {
+
+        cancelAnimationFrame(
+            animationFrame
+        );
+
+        animationFrame =
+            null;
+
+    }
+
+
+    if (audio) {
+
+        audio.pause();
+
+        audio.currentTime = 0;
+
+    }
+
+
+    activeNotes.forEach(
+        note => note.remove()
+    );
+
+
+    activeNotes = [];
+
+}
+
+
+/* =========================================================
+   초기화
+========================================================= */
+
+showScreen(
+    "menu"
+);
+
+</script>
+
+</body>
+</html>
