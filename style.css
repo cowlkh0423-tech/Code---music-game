@@ -1,0 +1,783 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #050509;
+    color: white;
+    font-family: Arial, sans-serif;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+button {
+    font: inherit;
+    border: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+/* ==============================
+   화면
+============================== */
+
+.screen {
+    position: fixed;
+    inset: 0;
+    display: none;
+}
+
+.screen.active {
+    display: flex;
+}
+
+
+/* ==============================
+   메인 화면
+============================== */
+
+#menuScreen {
+    justify-content: center;
+    align-items: center;
+    background:
+        radial-gradient(
+            circle at center,
+            #20202b 0%,
+            #0c0c12 45%,
+            #050509 100%
+        );
+}
+
+.menu {
+    width: min(90%, 520px);
+    text-align: center;
+}
+
+.logo p {
+    font-size: 14px;
+    letter-spacing: 6px;
+    opacity: 0.6;
+    margin-bottom: 12px;
+}
+
+.logo h1 {
+    font-size: clamp(42px, 10vw, 72px);
+    font-weight: 900;
+    letter-spacing: 3px;
+}
+
+.songSelect {
+    margin-top: 50px;
+}
+
+.songButton {
+    position: relative;
+    width: 100%;
+    min-height: 130px;
+    padding: 25px;
+    border-radius: 22px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+
+    text-align: left;
+
+    color: white;
+    background: #17171f;
+
+    border: 1px solid #30303c;
+
+    transition:
+        transform 0.15s,
+        background 0.15s,
+        border-color 0.15s;
+}
+
+.songButton:hover {
+    transform: translateY(-4px);
+    background: #22222c;
+    border-color: #555565;
+}
+
+.songButton:active {
+    transform: scale(0.97);
+}
+
+.songNumber {
+    font-size: 12px;
+    opacity: 0.5;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+}
+
+.songButton strong {
+    font-size: 28px;
+}
+
+.songButton span:last-child {
+    margin-top: 5px;
+    opacity: 0.6;
+}
+
+.helpText {
+    margin-top: 30px;
+    font-size: 13px;
+    opacity: 0.45;
+}
+
+
+/* ==============================
+   게임 화면
+============================== */
+
+#gameScreen {
+    flex-direction: column;
+    background: #050509;
+}
+
+
+/* ==============================
+   게임 헤더
+============================== */
+
+#gameHeader {
+    position: relative;
+    z-index: 20;
+
+    height: 70px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-bottom: 1px solid #25252d;
+    background: rgba(5, 5, 9, 0.95);
+}
+
+.backButton {
+    position: absolute;
+    left: 15px;
+
+    width: 42px;
+    height: 42px;
+
+    border-radius: 50%;
+
+    color: white;
+    background: #18181f;
+
+    font-size: 22px;
+}
+
+.backButton:active {
+    transform: scale(0.9);
+}
+
+.songTitle {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.stats {
+    position: absolute;
+    right: 15px;
+
+    display: flex;
+    gap: 18px;
+}
+
+.stats div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stats small {
+    font-size: 9px;
+    opacity: 0.45;
+}
+
+.stats strong {
+    font-size: 17px;
+}
+
+
+/* ==============================
+   게임 영역
+============================== */
+
+#gameArea {
+    position: relative;
+
+    flex: 1;
+
+    width: min(100%, 650px);
+
+    margin: 0 auto;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            to bottom,
+            #0c0c12,
+            #08080d
+        );
+}
+
+
+/* ==============================
+   레인
+============================== */
+
+.lane {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+
+    width: 33.333%;
+
+    opacity: 0.08;
+}
+
+.laneRed {
+    left: 0;
+    background: #ff3030;
+}
+
+.laneYellow {
+    left: 33.333%;
+    background: #ffe600;
+}
+
+.laneBlue {
+    left: 66.666%;
+    background: #3185ff;
+}
+
+
+/* ==============================
+   레인 구분선
+============================== */
+
+.laneDivider {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+
+    width: 1px;
+
+    background: rgba(255, 255, 255, 0.15);
+
+    z-index: 2;
+}
+
+.divider1 {
+    left: 33.333%;
+}
+
+.divider2 {
+    left: 66.666%;
+}
+
+
+/* ==============================
+   노트 영역
+============================== */
+
+#noteContainer {
+    position: absolute;
+    inset: 0;
+
+    z-index: 5;
+
+    pointer-events: none;
+}
+
+
+/* ==============================
+   노트
+============================== */
+
+.note {
+    position: absolute;
+
+    width: 48px;
+    height: 48px;
+
+    transform: translateX(-50%);
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 15px currentColor,
+        0 0 30px currentColor;
+
+    border: 3px solid rgba(255, 255, 255, 0.8);
+}
+
+.note.red {
+    background: #ff3030;
+    color: #ff3030;
+}
+
+.note.yellow {
+    background: #ffe600;
+    color: #ffe600;
+}
+
+.note.blue {
+    background: #3185ff;
+    color: #3185ff;
+}
+
+
+/* ==============================
+   판정선
+============================== */
+
+#judgeLine {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+
+    bottom: 150px;
+
+    height: 4px;
+
+    z-index: 8;
+
+    background: white;
+
+    box-shadow:
+        0 0 10px white,
+        0 0 25px rgba(255, 255, 255, 0.6);
+
+    pointer-events: none;
+}
+
+
+/* ==============================
+   판정 텍스트
+============================== */
+
+#judgeText {
+    position: absolute;
+
+    left: 50%;
+    top: 38%;
+
+    z-index: 15;
+
+    transform:
+        translate(-50%, -50%)
+        scale(0.7);
+
+    opacity: 0;
+
+    font-size: 32px;
+    font-weight: 900;
+
+    pointer-events: none;
+}
+
+#judgeText.show {
+    animation: judgeAnimation 0.35s ease-out;
+}
+
+#judgeText.perfect {
+    color: white;
+}
+
+#judgeText.good {
+    color: #ffe600;
+}
+
+#judgeText.miss {
+    color: #ff4040;
+}
+
+@keyframes judgeAnimation {
+
+    0% {
+        opacity: 0;
+        transform:
+            translate(-50%, -50%)
+            scale(0.7);
+    }
+
+    30% {
+        opacity: 1;
+        transform:
+            translate(-50%, -50%)
+            scale(1.1);
+    }
+
+    100% {
+        opacity: 0;
+        transform:
+            translate(-50%, -50%)
+            scale(1);
+    }
+
+}
+
+
+/* ==============================
+   카운트다운
+============================== */
+
+#countdown {
+    position: absolute;
+
+    left: 50%;
+    top: 38%;
+
+    transform: translate(-50%, -50%);
+
+    z-index: 30;
+
+    font-size: 70px;
+    font-weight: 900;
+
+    pointer-events: none;
+
+    text-shadow:
+        0 0 20px white;
+}
+
+
+/* ==============================
+   하단 조작 버튼
+============================== */
+
+#controlArea {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 150px;
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    z-index: 10;
+}
+
+.controlButton {
+    position: relative;
+
+    height: 100%;
+
+    color: white;
+
+    border-top: 2px solid rgba(255,255,255,0.35);
+
+    background: rgba(10,10,15,0.9);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    gap: 8px;
+
+    transition:
+        transform 0.08s,
+        filter 0.08s;
+}
+
+.controlButton span {
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.controlButton b {
+    font-size: 25px;
+}
+
+.controlButton.red {
+    border-top-color: #ff3030;
+}
+
+.controlButton.yellow {
+    border-top-color: #ffe600;
+}
+
+.controlButton.blue {
+    border-top-color: #3185ff;
+}
+
+.controlButton.pressed {
+    transform: scale(0.96);
+    filter: brightness(1.8);
+}
+
+.controlButton.red.pressed {
+    background: rgba(255, 48, 48, 0.35);
+}
+
+.controlButton.yellow.pressed {
+    background: rgba(255, 230, 0, 0.3);
+}
+
+.controlButton.blue.pressed {
+    background: rgba(49, 133, 255, 0.35);
+}
+
+
+/* ==============================
+   결과 화면
+============================== */
+
+#resultScreen {
+    justify-content: center;
+    align-items: center;
+
+    background:
+        radial-gradient(
+            circle,
+            #20202b,
+            #08080d 70%
+        );
+}
+
+.result {
+    width: min(90%, 450px);
+
+    text-align: center;
+}
+
+.resultSmall {
+    font-size: 12px;
+    letter-spacing: 4px;
+    opacity: 0.5;
+}
+
+#resultTitle {
+    margin-top: 10px;
+
+    font-size: 64px;
+    font-weight: 900;
+}
+
+#resultTitle.clear {
+    color: white;
+}
+
+#resultTitle.failed {
+    color: #ff4040;
+}
+
+#resultSong {
+    margin-top: 5px;
+
+    font-size: 18px;
+    opacity: 0.6;
+}
+
+
+/* ==============================
+   결과 기록
+============================== */
+
+.resultStats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    margin-top: 40px;
+
+    padding: 25px 10px;
+
+    border-radius: 18px;
+
+    background: #15151d;
+}
+
+.resultStats div {
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+.resultStats span {
+    font-size: 10px;
+    opacity: 0.45;
+}
+
+.resultStats strong {
+    font-size: 24px;
+}
+
+
+/* ==============================
+   보상
+============================== */
+
+#reward {
+    margin-top: 20px;
+
+    padding: 20px;
+
+    border-radius: 18px;
+
+    background: #15151d;
+
+    transition: 0.2s;
+}
+
+#reward.success {
+    border: 1px solid #555;
+}
+
+#reward.failed {
+    opacity: 0.65;
+}
+
+#rewardIcon {
+    font-size: 35px;
+}
+
+#rewardTitle {
+    display: block;
+
+    margin-top: 5px;
+
+    font-size: 20px;
+}
+
+#rewardMessage {
+    margin-top: 4px;
+
+    font-size: 13px;
+
+    opacity: 0.6;
+}
+
+
+/* ==============================
+   결과 버튼
+============================== */
+
+.resultButtons {
+    display: flex;
+
+    gap: 12px;
+
+    margin-top: 25px;
+}
+
+.resultButtons button {
+    flex: 1;
+
+    height: 55px;
+
+    border-radius: 14px;
+
+    color: white;
+
+    background: #20202a;
+
+    font-weight: bold;
+
+    transition: 0.15s;
+}
+
+.resultButtons button:first-child {
+    background: white;
+    color: black;
+}
+
+.resultButtons button:hover {
+    transform: translateY(-2px);
+}
+
+.resultButtons button:active {
+    transform: scale(0.96);
+}
+
+
+/* ==============================
+   모바일
+============================== */
+
+@media (max-width: 600px) {
+
+    #gameHeader {
+        height: 60px;
+    }
+
+    .songTitle {
+        font-size: 15px;
+    }
+
+    .stats {
+        gap: 10px;
+    }
+
+    #judgeLine {
+        bottom: 135px;
+    }
+
+    #controlArea {
+        height: 135px;
+    }
+
+    .controlButton span {
+        font-size: 10px;
+    }
+
+    .controlButton b {
+        font-size: 22px;
+    }
+
+    .note {
+        width: 42px;
+        height: 42px;
+    }
+
+    #resultTitle {
+        font-size: 54px;
+    }
+
+}
+
+
+/* ==============================
+   작은 화면
+============================== */
+
+@media (max-height: 650px) {
+
+    #controlArea {
+        height: 110px;
+    }
+
+    #judgeLine {
+        bottom: 110px;
+    }
+
+    .controlButton {
+        gap: 4px;
+    }
+
+    .controlButton b {
+        font-size: 18px;
+    }
+
+}
