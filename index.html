@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
+
+    <title>COLOR BEAT</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ==============================
+         메인 화면
+    =============================== -->
+
+    <section id="menuScreen" class="screen active">
+
+        <div class="menu">
+
+            <div class="logo">
+                <p>RHYTHM GAME</p>
+                <h1>COLOR BEAT</h1>
+            </div>
+
+
+            <div class="songSelect">
+
+                <button
+                    class="songButton"
+                    id="lemonadeButton"
+                >
+
+                    <span class="songNumber">
+                        SONG 01
+                    </span>
+
+                    <strong>
+                        LEMONADE
+                    </strong>
+
+                    <span>
+                        aespa
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <p class="helpText">
+                A · S · D 키 또는 화면 버튼으로 플레이
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ==============================
+         게임 화면
+    =============================== -->
+
+    <section id="gameScreen" class="screen">
+
+        <!-- 상단 -->
+
+        <div id="gameHeader">
+
+            <button
+                id="backButton"
+                class="backButton"
+            >
+                ←
+            </button>
+
+
+            <div
+                id="songTitle"
+                class="songTitle"
+            >
+                LEMONADE
+            </div>
+
+
+            <div class="stats">
+
+                <div>
+                    <small>HIT</small>
+                    <strong id="hitCount">0</strong>
+                </div>
+
+                <div>
+                    <small>MISS</small>
+                    <strong id="missCount">0</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==============================
+             게임 필드
+        =============================== -->
+
+        <div id="gameArea">
+
+            <!-- 레인 -->
+
+            <div
+                class="lane laneRed"
+                data-lane="0"
+            ></div>
+
+            <div
+                class="lane laneYellow"
+                data-lane="1"
+            ></div>
+
+            <div
+                class="lane laneBlue"
+                data-lane="2"
+            ></div>
+
+
+            <!-- 레인 경계 -->
+
+            <div class="laneDivider divider1"></div>
+
+            <div class="laneDivider divider2"></div>
+
+
+            <!-- 노트가 생성되는 곳 -->
+
+            <div id="noteContainer"></div>
+
+
+            <!-- 판정선 -->
+
+            <div id="judgeLine"></div>
+
+
+            <!-- 판정 텍스트 -->
+
+            <div id="judgeText"></div>
+
+
+            <!-- 카운트다운 -->
+
+            <div id="countdown"></div>
+
+
+            <!-- ==========================
+                 하단 버튼
+            =========================== -->
+
+            <div id="controlArea">
+
+                <button
+                    class="controlButton red"
+                    data-lane="0"
+                >
+                    <span>RED</span>
+                    <b>A</b>
+                </button>
+
+
+                <button
+                    class="controlButton yellow"
+                    data-lane="1"
+                >
+                    <span>YELLOW</span>
+                    <b>S</b>
+                </button>
+
+
+                <button
+                    class="controlButton blue"
+                    data-lane="2"
+                >
+                    <span>BLUE</span>
+                    <b>D</b>
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ==============================
+         결과 화면
+    =============================== -->
+
+    <section id="resultScreen" class="screen">
+
+        <div class="result">
+
+            <p class="resultSmall">
+                SONG COMPLETE
+            </p>
+
+
+            <h1 id="resultTitle">
+                CLEAR
+            </h1>
+
+
+            <h2 id="resultSong">
+                LEMONADE
+            </h2>
+
+
+            <div class="resultStats">
+
+                <div>
+                    <span>HIT</span>
+                    <strong id="resultHit">
+                        0
+                    </strong>
+                </div>
+
+
+                <div>
+                    <span>MISS</span>
+                    <strong id="resultMiss">
+                        0
+                    </strong>
+                </div>
+
+
+                <div>
+                    <span>ACCURACY</span>
+                    <strong id="resultAccuracy">
+                        0%
+                    </strong>
+                </div>
+
+            </div>
+
+
+            <!-- 보상 -->
+
+            <div id="reward">
+
+                <div id="rewardIcon">
+                    🎁
+                </div>
+
+                <strong id="rewardTitle">
+                    CLEAR!
+                </strong>
+
+                <p id="rewardMessage">
+                    보상을 획득했습니다!
+                </p>
+
+            </div>
+
+
+            <!-- 버튼 -->
+
+            <div class="resultButtons">
+
+                <button
+                    id="retryButton"
+                >
+                    다시 하기
+                </button>
+
+
+                <button
+                    id="menuButton"
+                >
+                    곡 선택
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ==============================
+         음악
+    =============================== -->
+
+    <audio
+        id="music"
+        preload="auto"
+    ></audio>
+
+
+
+    <!-- ==============================
+         JavaScript
+         
+         순서 중요!
+    =============================== -->
+
+    <script src="js/lemonade.js"></script>
+    <script src="js/game.js"></script>
+
+</body>
+</html>
