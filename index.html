@@ -2,7 +2,11 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>COLOR BEAT</title>
 
@@ -11,85 +15,215 @@
             box-sizing: border-box;
         }
 
+        html,
         body {
             margin: 0;
+            width: 100%;
+            min-height: 100%;
+
+            font-family:
+                Arial,
+                "Noto Sans KR",
+                sans-serif;
+
+            background: #08080c;
+            color: white;
+        }
+
+        body {
             min-height: 100vh;
 
             display: flex;
             justify-content: center;
             align-items: center;
 
-            background: #111;
-            color: white;
+            padding: 20px;
+        }
 
-            font-family: Arial, sans-serif;
+        .container {
+            width: 100%;
+            max-width: 550px;
+
             text-align: center;
         }
 
-        .box {
-            width: min(90%, 500px);
-        }
-
         h1 {
-            font-size: 48px;
-            margin-bottom: 10px;
+            margin: 0;
+
+            font-size: 52px;
+            font-weight: 900;
+            letter-spacing: 3px;
         }
 
-        p {
-            color: #aaa;
-            margin-bottom: 35px;
+        .subtitle {
+            margin-top: 10px;
+
+            color: #888;
+            font-size: 14px;
+            letter-spacing: 2px;
         }
 
-        button {
+        .song-card {
+            margin-top: 45px;
+
+            padding: 30px;
+
+            border-radius: 20px;
+
+            background: #15151d;
+            border: 1px solid #292934;
+        }
+
+        .song-number {
+            color: #777;
+
+            font-size: 12px;
+            letter-spacing: 3px;
+        }
+
+        .song-title {
+            margin-top: 10px;
+
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .artist {
+            margin-top: 6px;
+
+            color: #888;
+        }
+
+        audio {
             width: 100%;
-            padding: 20px;
 
-            border: none;
-            border-radius: 15px;
+            margin-top: 30px;
+        }
 
-            background: #333;
-            color: white;
+        .status {
+            margin-top: 20px;
 
-            font-size: 20px;
+            min-height: 24px;
+
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .test-button {
+            width: 100%;
+
+            margin-top: 20px;
+            padding: 16px;
+
+            border: 0;
+            border-radius: 12px;
+
+            background: white;
+            color: black;
+
+            font-size: 16px;
             font-weight: bold;
 
             cursor: pointer;
         }
 
-        button:active {
-            transform: scale(0.97);
+        .test-button:active {
+            transform: scale(0.98);
         }
 
-        #status {
+        .path {
             margin-top: 25px;
-            min-height: 25px;
+
+            padding: 12px;
+
+            border-radius: 8px;
+
+            background: #0d0d12;
+
+            color: #666;
+
+            font-family: monospace;
+            font-size: 12px;
+
+            word-break: break-all;
         }
     </style>
 </head>
 
+
 <body>
 
-    <div class="box">
+    <main class="container">
 
-        <h1>COLOR BEAT</h1>
+        <h1>
+            COLOR BEAT
+        </h1>
 
-        <p>음악 재생 테스트</p>
-
-        <button id="playButton">
-            ▶ LEMONADE 재생
-        </button>
-
-        <div id="status"></div>
-
-    </div>
+        <div class="subtitle">
+            MUSIC TEST
+        </div>
 
 
-    <!-- 음악 -->
-    <audio
-        id="music"
-        preload="auto"
-        src="./music/lemonade.mp3">
-    </audio>
+        <div class="song-card">
+
+            <div class="song-number">
+                SONG 01
+            </div>
+
+            <div class="song-title">
+                LEMONADE
+            </div>
+
+            <div class="artist">
+                aespa
+            </div>
+
+
+            <!--
+                GitHub Pages에서 실제 MP3를
+                직접 재생하는 플레이어
+            -->
+
+            <audio
+                id="music"
+                controls
+                preload="metadata"
+            >
+
+                <source
+                    src="./music/lemonade.mp3"
+                    type="audio/mpeg"
+                >
+
+                브라우저가 오디오를 지원하지 않습니다.
+
+            </audio>
+
+
+            <button
+                id="testButton"
+                class="test-button"
+                type="button"
+            >
+                ▶ 음악 재생 테스트
+            </button>
+
+
+            <div
+                id="status"
+                class="status"
+            >
+                재생 버튼을 눌러주세요.
+            </div>
+
+
+            <div class="path">
+                ./music/lemonade.mp3
+            </div>
+
+        </div>
+
+    </main>
 
 
     <script>
@@ -97,14 +231,18 @@
         const music =
             document.getElementById("music");
 
-        const playButton =
-            document.getElementById("playButton");
+        const testButton =
+            document.getElementById("testButton");
 
         const status =
             document.getElementById("status");
 
 
-        playButton.addEventListener(
+        /*
+         * 테스트 버튼
+         */
+
+        testButton.addEventListener(
             "click",
             async function () {
 
@@ -113,10 +251,10 @@
                     await music.play();
 
                     status.textContent =
-                        "🎵 음악이 재생되고 있습니다.";
+                        "🎵 음악이 정상적으로 재생되고 있습니다.";
 
-                    playButton.textContent =
-                        "⏸ 음악 재생 중";
+                    testButton.textContent =
+                        "⏸ 재생 중";
 
                 }
 
@@ -127,20 +265,62 @@
                     status.textContent =
                         "❌ 음악을 재생할 수 없습니다.";
 
+                    testButton.textContent =
+                        "▶ 다시 테스트";
+
                 }
 
             }
         );
 
 
+        /*
+         * 음악이 정상적으로 로드되었을 때
+         */
+
+        music.addEventListener(
+            "loadedmetadata",
+            function () {
+
+                status.textContent =
+                    "✅ 음악 파일을 정상적으로 불러왔습니다.";
+
+            }
+        );
+
+
+        /*
+         * 음악 로딩 오류
+         */
+
+        music.addEventListener(
+            "error",
+            function () {
+
+                status.textContent =
+                    "❌ MP3 파일을 불러오지 못했습니다.";
+
+                console.error(
+                    "Audio error:",
+                    music.error
+                );
+
+            }
+        );
+
+
+        /*
+         * 음악 종료
+         */
+
         music.addEventListener(
             "ended",
             function () {
 
                 status.textContent =
-                    "음악 재생이 끝났습니다.";
+                    "🎵 음악 재생이 끝났습니다.";
 
-                playButton.textContent =
+                testButton.textContent =
                     "▶ 다시 재생";
 
             }
