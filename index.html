@@ -1,0 +1,2957 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>COLOR BEAT</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    background: #050509;
+    color: white;
+
+    font-family:
+        Arial,
+        "Noto Sans KR",
+        sans-serif;
+}
+
+
+/* ==================================================
+   화면
+================================================== */
+
+.screen {
+    position: fixed;
+    inset: 0;
+
+    display: none;
+}
+
+.screen.active {
+    display: flex;
+}
+
+
+/* ==================================================
+   메뉴
+================================================== */
+
+#menu {
+
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(
+            circle at 50% 20%,
+            #30303d 0%,
+            #111119 35%,
+            #050507 75%
+        );
+}
+
+.menuBox {
+
+    width: min(90vw, 600px);
+
+    text-align: center;
+}
+
+.logo {
+
+    font-size: 64px;
+    font-weight: 900;
+
+    letter-spacing: 7px;
+
+    text-shadow:
+        0 0 20px rgba(255,255,255,.3);
+}
+
+.subtitle {
+
+    margin-top: 8px;
+
+    color: #777;
+
+    letter-spacing: 5px;
+    font-size: 13px;
+}
+
+.songList {
+
+    margin-top: 45px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 13px;
+}
+
+.songButton {
+
+    width: 100%;
+
+    padding: 20px 22px;
+
+    border: 1px solid #30303b;
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #15151e,
+            #0e0e15
+        );
+
+    color: white;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        transform .15s,
+        background .15s,
+        border-color .15s;
+}
+
+.songButton:hover {
+
+    transform: translateY(-3px);
+
+    background: #1c1c27;
+
+    border-color: #555565;
+}
+
+.songButton small {
+
+    color: #666;
+
+    letter-spacing: 2px;
+}
+
+.songButton strong {
+
+    display: block;
+
+    margin-top: 5px;
+
+    font-size: 23px;
+}
+
+.songButton span {
+
+    display: block;
+
+    margin-top: 5px;
+
+    color: #777;
+}
+
+.menuHelp {
+
+    margin-top: 25px;
+
+    color: #555;
+
+    font-size: 13px;
+}
+
+
+/* ==================================================
+   게임 화면
+================================================== */
+
+#game {
+
+    justify-content: center;
+
+    background: #050507;
+}
+
+.gameContainer {
+
+    position: relative;
+
+    width: min(100vw, 760px);
+    height: 100vh;
+
+    overflow: hidden;
+
+    background: #07070c;
+}
+
+
+/* ==================================================
+   상단바
+================================================== */
+
+.topBar {
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    top: 0;
+
+    height: 68px;
+
+    z-index: 100;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background:
+        rgba(5,5,9,.97);
+
+    border-bottom:
+        1px solid #292932;
+}
+
+.back {
+
+    position: absolute;
+
+    left: 12px;
+
+    width: 42px;
+    height: 42px;
+
+    border: 0;
+    border-radius: 11px;
+
+    background: #181820;
+
+    color: white;
+
+    font-size: 22px;
+
+    cursor: pointer;
+}
+
+.songInfo {
+
+    text-align: center;
+}
+
+.songInfo strong {
+
+    display: block;
+
+    font-size: 17px;
+}
+
+.songInfo span {
+
+    display: block;
+
+    margin-top: 4px;
+
+    color: #777;
+
+    font-size: 11px;
+}
+
+.scoreBox {
+
+    position: absolute;
+
+    right: 16px;
+
+    text-align: right;
+}
+
+.scoreBox small {
+
+    color: #666;
+
+    font-size: 10px;
+}
+
+.scoreBox strong {
+
+    display: block;
+
+    margin-top: 2px;
+
+    font-size: 22px;
+}
+
+
+/* ==================================================
+   플레이 영역
+================================================== */
+
+.playArea {
+
+    position: absolute;
+
+    top: 68px;
+    bottom: 130px;
+
+    left: 0;
+    right: 0;
+
+    overflow: hidden;
+
+    background: #08080d;
+}
+
+
+/* ==================================================
+   피아노 타일 배경
+================================================== */
+
+.lanes {
+
+    position: absolute;
+
+    inset: 0;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+}
+
+.lane {
+
+    position: relative;
+
+    border-left:
+        1px solid rgba(255,255,255,.09);
+
+    border-right:
+        1px solid rgba(255,255,255,.025);
+
+    background:
+
+        repeating-linear-gradient(
+            to bottom,
+
+            rgba(255,255,255,.025)
+            0px,
+
+            rgba(255,255,255,.025)
+            2px,
+
+            transparent
+            2px,
+
+            transparent
+            72px
+        );
+}
+
+.lane::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+
+        repeating-linear-gradient(
+            to bottom,
+
+            transparent
+            0px,
+
+            transparent
+            66px,
+
+            rgba(255,255,255,.035)
+            66px,
+
+            rgba(255,255,255,.035)
+            70px
+        );
+}
+
+.lane:nth-child(1) {
+
+    box-shadow:
+        inset 0 0 45px
+        rgba(255,50,65,.06);
+}
+
+.lane:nth-child(2) {
+
+    box-shadow:
+        inset 0 0 45px
+        rgba(255,225,40,.06);
+}
+
+.lane:nth-child(3) {
+
+    box-shadow:
+        inset 0 0 45px
+        rgba(50,130,255,.06);
+}
+
+.lane:nth-child(4) {
+
+    box-shadow:
+        inset 0 0 45px
+        rgba(190,70,255,.06);
+}
+
+
+/* ==================================================
+   음표 레이어
+================================================== */
+
+.noteLayer {
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 20;
+}
+
+
+/* ==================================================
+   음표
+================================================== */
+
+.normalNote {
+
+    position: absolute;
+
+    width: 60px;
+    height: 65px;
+
+    transform:
+        translateX(-50%);
+
+    z-index: 30;
+
+    pointer-events: none;
+}
+
+.normalNote::before {
+
+    content: "♪";
+
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    font-size: 64px;
+
+    line-height: 1;
+
+    font-weight: 900;
+
+    filter:
+        drop-shadow(
+            0 0 7px currentColor
+        )
+        drop-shadow(
+            0 0 15px currentColor
+        );
+}
+
+
+/* 색상 */
+
+.normalNote.lane0 {
+
+    color: #ff3c4b;
+}
+
+.normalNote.lane1 {
+
+    color: #ffe32e;
+}
+
+.normalNote.lane2 {
+
+    color: #3c8cff;
+}
+
+.normalNote.lane3 {
+
+    color: #bf5cff;
+}
+
+
+/* ==================================================
+   판정선
+================================================== */
+
+.judgeLine {
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+
+    bottom: 61px;
+
+    height: 10px;
+
+    z-index: 50;
+
+    background: white;
+
+    border-radius: 6px;
+
+    box-shadow:
+
+        0 0 10px white,
+
+        0 0 24px
+        rgba(255,255,255,.9),
+
+        0 0 45px
+        rgba(255,255,255,.35);
+}
+
+
+/* ==================================================
+   HIT / MISS
+================================================== */
+
+.judgeText {
+
+    position: absolute;
+
+    left: 50%;
+    top: 38%;
+
+    transform:
+        translate(-50%, -50%);
+
+    z-index: 90;
+
+    opacity: 0;
+
+    font-size: 36px;
+
+    font-weight: 900;
+
+    pointer-events: none;
+}
+
+.judgeText.show {
+
+    animation:
+        judgeAnimation
+        .35s
+        ease-out;
+}
+
+.judgeText.hit {
+
+    color: white;
+
+    text-shadow:
+        0 0 10px white;
+}
+
+.judgeText.miss {
+
+    color: #ff2424;
+
+    text-shadow:
+        0 0 10px red,
+        0 0 25px red;
+}
+
+@keyframes judgeAnimation {
+
+    0% {
+
+        opacity: 0;
+
+        transform:
+            translate(-50%, -50%)
+            scale(.7);
+    }
+
+    25% {
+
+        opacity: 1;
+
+        transform:
+            translate(-50%, -50%)
+            scale(1.1);
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform:
+            translate(-50%, -50%)
+            scale(1);
+    }
+}
+
+
+/* ==================================================
+   카운트다운
+================================================== */
+
+.countdown {
+
+    position: absolute;
+
+    left: 50%;
+    top: 42%;
+
+    transform:
+        translate(-50%, -50%);
+
+    z-index: 120;
+
+    font-size: 82px;
+
+    font-weight: 900;
+
+    text-shadow:
+        0 0 20px white;
+}
+
+
+/* ==================================================
+   ASDF 버튼
+================================================== */
+
+.keyArea {
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 130px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    z-index: 100;
+
+    background: #06060b;
+}
+
+.key {
+
+    position: relative;
+
+    border: 0;
+
+    border-top: 4px solid;
+
+    background:
+        linear-gradient(
+            to bottom,
+            #16161e,
+            #0d0d13
+        );
+
+    color: white;
+
+    font-size: 34px;
+
+    font-weight: 900;
+
+    cursor: pointer;
+
+    transition:
+        transform .05s,
+        background .05s;
+}
+
+.key:nth-child(1) {
+
+    border-color: #ff3c4b;
+}
+
+.key:nth-child(2) {
+
+    border-color: #ffe32e;
+}
+
+.key:nth-child(3) {
+
+    border-color: #3c8cff;
+}
+
+.key:nth-child(4) {
+
+    border-color: #bf5cff;
+}
+
+.key.active {
+
+    transform:
+        scale(.95);
+}
+
+.key.active:nth-child(1) {
+
+    background:
+        rgba(255,60,75,.4);
+}
+
+.key.active:nth-child(2) {
+
+    background:
+        rgba(255,227,46,.35);
+}
+
+.key.active:nth-child(3) {
+
+    background:
+        rgba(60,140,255,.35);
+}
+
+.key.active:nth-child(4) {
+
+    background:
+        rgba(191,92,255,.35);
+}
+
+
+/* ==================================================
+   시작 오버레이
+================================================== */
+
+.startOverlay {
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 200;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        rgba(4,4,8,.96);
+}
+
+.startOverlay h2 {
+
+    font-size: 48px;
+}
+
+.startOverlay p {
+
+    margin-top: 8px;
+
+    color: #777;
+}
+
+.startButton {
+
+    margin-top: 28px;
+
+    padding:
+        16px 65px;
+
+    border: 0;
+
+    border-radius: 12px;
+
+    background: white;
+
+    color: black;
+
+    font-size: 16px;
+
+    font-weight: 900;
+
+    cursor: pointer;
+}
+
+
+/* ==================================================
+   결과 화면
+================================================== */
+
+#result {
+
+    align-items: center;
+    justify-content: center;
+
+    background:
+
+        radial-gradient(
+            circle at 50% 20%,
+            #30303d,
+            #07070c 70%
+        );
+}
+
+.resultBox {
+
+    width:
+        min(90vw, 540px);
+
+    text-align: center;
+}
+
+.resultBox > small {
+
+    color: #777;
+
+    letter-spacing: 4px;
+}
+
+.resultBox h1 {
+
+    margin-top: 8px;
+
+    font-size: 72px;
+}
+
+.resultSong {
+
+    margin-top: 10px;
+
+    color: #777;
+}
+
+.finalScore {
+
+    margin-top: 30px;
+
+    font-size: 72px;
+
+    font-weight: 900;
+}
+
+.stats {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 10px;
+
+    margin-top: 25px;
+}
+
+.stat {
+
+    padding: 18px;
+
+    border-radius: 12px;
+
+    background: #15151d;
+}
+
+.stat span {
+
+    display: block;
+
+    color: #777;
+}
+
+.stat strong {
+
+    display: block;
+
+    margin-top: 6px;
+
+    font-size: 25px;
+}
+
+.reward {
+
+    margin-top: 18px;
+
+    padding: 18px;
+
+    border:
+        1px solid #30303a;
+
+    border-radius: 13px;
+
+    background: #15151d;
+}
+
+.reward p {
+
+    margin-top: 6px;
+
+    color: #777;
+}
+
+.resultButtons {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 10px;
+
+    margin-top: 18px;
+}
+
+.resultButtons button {
+
+    padding: 15px;
+
+    border: 0;
+
+    border-radius: 10px;
+
+    background: #24242d;
+
+    color: white;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.resultButtons button:first-child {
+
+    background: white;
+
+    color: black;
+}
+
+
+/* ==================================================
+   모바일
+================================================== */
+
+@media(max-width:600px) {
+
+    .logo {
+
+        font-size: 42px;
+    }
+
+    .normalNote::before {
+
+        font-size: 58px;
+    }
+
+    .normalNote {
+
+        width: 55px;
+        height: 60px;
+    }
+
+    .keyArea {
+
+        height: 115px;
+    }
+
+    .playArea {
+
+        bottom: 115px;
+    }
+
+    .key {
+
+        font-size: 30px;
+    }
+
+    .finalScore {
+
+        font-size: 58px;
+    }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- ==================================================
+     곡 선택
+================================================== -->
+
+<section
+    id="menu"
+    class="screen active"
+>
+
+    <div class="menuBox">
+
+        <div class="logo">
+            COLOR BEAT
+        </div>
+
+        <div class="subtitle">
+            RHYTHM GAME
+        </div>
+
+
+        <div class="songList">
+
+            <button
+                class="songButton"
+                data-song="lemonade"
+            >
+
+                <small>
+                    SONG 01
+                </small>
+
+                <strong>
+                    LEMONADE
+                </strong>
+
+                <span>
+                    aespa
+                </span>
+
+            </button>
+
+
+            <button
+                class="songButton"
+                data-song="loveAttack"
+            >
+
+                <small>
+                    SONG 02
+                </small>
+
+                <strong>
+                    LOVE ATTACK
+                </strong>
+
+                <span>
+                    RESCENE
+                </span>
+
+            </button>
+
+
+            <button
+                class="songButton"
+                data-song="blueValentine"
+            >
+
+                <small>
+                    SONG 03
+                </small>
+
+                <strong>
+                    BLUE VALENTINE
+                </strong>
+
+                <span>
+                    NMIXX
+                </span>
+
+            </button>
+
+        </div>
+
+
+        <div class="menuHelp">
+
+            A · S · D · F
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ==================================================
+     게임
+================================================== -->
+
+<section
+    id="game"
+    class="screen"
+>
+
+    <div class="gameContainer">
+
+
+        <!-- 상단 -->
+
+        <div class="topBar">
+
+            <button
+                class="back"
+                id="backButton"
+            >
+                ←
+            </button>
+
+
+            <div class="songInfo">
+
+                <strong
+                    id="songTitle"
+                >
+                    LEMONADE
+                </strong>
+
+                <span
+                    id="songArtist"
+                >
+                    aespa
+                </span>
+
+            </div>
+
+
+            <div class="scoreBox">
+
+                <small>
+                    SCORE
+                </small>
+
+                <strong
+                    id="score"
+                >
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- 플레이 -->
+
+        <div class="playArea">
+
+            <div class="lanes">
+
+                <div class="lane"></div>
+                <div class="lane"></div>
+                <div class="lane"></div>
+                <div class="lane"></div>
+
+            </div>
+
+
+            <div
+                class="noteLayer"
+                id="noteLayer"
+            ></div>
+
+
+            <div class="judgeLine"></div>
+
+
+            <div
+                class="judgeText"
+                id="judgeText"
+            ></div>
+
+
+            <div
+                class="countdown"
+                id="countdown"
+            ></div>
+
+        </div>
+
+
+
+        <!-- ASDF -->
+
+        <div class="keyArea">
+
+            <button
+                class="key"
+                data-lane="0"
+            >
+                A
+            </button>
+
+            <button
+                class="key"
+                data-lane="1"
+            >
+                S
+            </button>
+
+            <button
+                class="key"
+                data-lane="2"
+            >
+                D
+            </button>
+
+            <button
+                class="key"
+                data-lane="3"
+            >
+                F
+            </button>
+
+        </div>
+
+
+
+        <!-- 시작 -->
+
+        <div
+            class="startOverlay"
+            id="startOverlay"
+        >
+
+            <h2
+                id="startSong"
+            >
+                LEMONADE
+            </h2>
+
+            <p
+                id="startArtist"
+            >
+                aespa
+            </p>
+
+            <button
+                class="startButton"
+                id="startButton"
+            >
+                START
+            </button>
+
+        </div>
+
+
+
+        <audio
+            id="audio"
+            preload="auto"
+        ></audio>
+
+    </div>
+
+</section>
+
+
+
+<!-- ==================================================
+     결과
+================================================== -->
+
+<section
+    id="result"
+    class="screen"
+>
+
+    <div class="resultBox">
+
+        <small>
+            RESULT
+        </small>
+
+
+        <h1
+            id="resultTitle"
+        >
+            FAILED
+        </h1>
+
+
+        <div
+            class="resultSong"
+            id="resultSong"
+        ></div>
+
+
+        <div
+            class="finalScore"
+            id="finalScore"
+        >
+            0 / 100
+        </div>
+
+
+        <div class="stats">
+
+            <div class="stat">
+
+                <span>
+                    HIT
+                </span>
+
+                <strong
+                    id="hitCount"
+                >
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="stat">
+
+                <span>
+                    MISS
+                </span>
+
+                <strong
+                    id="missCount"
+                >
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="reward">
+
+            <strong
+                id="rewardTitle"
+            >
+                NO REWARD
+            </strong>
+
+            <p
+                id="rewardText"
+            >
+                100점을 만들어야 클리어입니다.
+            </p>
+
+        </div>
+
+
+        <div class="resultButtons">
+
+            <button
+                id="retryButton"
+            >
+                다시 하기
+            </button>
+
+            <button
+                id="menuButton"
+            >
+                곡 선택
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<script>
+
+
+/* ==================================================
+   곡 정보
+================================================== */
+
+const SONGS = {
+
+    lemonade: {
+
+        title:
+            "LEMONADE",
+
+        artist:
+            "aespa",
+
+        file:
+            "./music/lemonade.mp3",
+
+        bpm:
+            129.2,
+
+        offset:
+            0.20,
+
+        duration:
+            187
+    },
+
+
+    loveAttack: {
+
+        title:
+            "LOVE ATTACK",
+
+        artist:
+            "RESCENE",
+
+        file:
+            "./music/love_attack.mp3",
+
+        bpm:
+            112,
+
+        offset:
+            0.20,
+
+        duration:
+            180
+    },
+
+
+    blueValentine: {
+
+        title:
+            "BLUE VALENTINE",
+
+        artist:
+            "NMIXX",
+
+        file:
+            "./music/blue_valentine.mp3",
+
+        bpm:
+            161,
+
+        offset:
+            0.20,
+
+        duration:
+            186
+    }
+
+};
+
+
+/* ==================================================
+   DOM
+================================================== */
+
+const menu =
+    document.getElementById(
+        "menu"
+    );
+
+const game =
+    document.getElementById(
+        "game"
+    );
+
+const result =
+    document.getElementById(
+        "result"
+    );
+
+const audio =
+    document.getElementById(
+        "audio"
+    );
+
+const noteLayer =
+    document.getElementById(
+        "noteLayer"
+    );
+
+const scoreElement =
+    document.getElementById(
+        "score"
+    );
+
+const judgeText =
+    document.getElementById(
+        "judgeText"
+    );
+
+const countdown =
+    document.getElementById(
+        "countdown"
+    );
+
+const startOverlay =
+    document.getElementById(
+        "startOverlay"
+    );
+
+
+/* ==================================================
+   변수
+================================================== */
+
+let currentSong = null;
+
+let chart = [];
+
+let chartIndex = 0;
+
+let activeNotes = [];
+
+let running = false;
+
+let animationFrame = null;
+
+let hitCount = 0;
+
+let missCount = 0;
+
+let totalNotes = 0;
+
+
+/* ==================================================
+   MISS 입력 잠금
+================================================== */
+
+/*
+ * MISS가 발생한 후
+ * 0.2초 동안 A/S/D/F 입력을 차단
+ */
+
+let inputLockedUntil = 0;
+
+const MISS_INPUT_LOCK = 200;
+
+
+/*
+ * 판정 범위
+ *
+ * 숫자가 작을수록 어려움
+ */
+
+const HIT_WINDOW =
+    0.12;
+
+
+/*
+ * 기본 낙하 시간
+ */
+
+const BASE_TRAVEL =
+    1.55;
+
+
+/* ==================================================
+   곡 선택
+================================================== */
+
+document
+    .querySelectorAll(".songButton")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                const id =
+                    button.dataset.song;
+
+                currentSong =
+                    SONGS[id];
+
+                openGame();
+
+            }
+        );
+
+    });
+
+
+/* ==================================================
+   게임 열기
+================================================== */
+
+function openGame() {
+
+    menu.classList.remove(
+        "active"
+    );
+
+    result.classList.remove(
+        "active"
+    );
+
+    game.classList.add(
+        "active"
+    );
+
+
+    document.getElementById(
+        "songTitle"
+    ).textContent =
+        currentSong.title;
+
+
+    document.getElementById(
+        "songArtist"
+    ).textContent =
+        currentSong.artist;
+
+
+    document.getElementById(
+        "startSong"
+    ).textContent =
+        currentSong.title;
+
+
+    document.getElementById(
+        "startArtist"
+    ).textContent =
+        currentSong.artist;
+
+
+    resetGame();
+
+}
+
+
+/* ==================================================
+   초기화
+================================================== */
+
+function resetGame() {
+
+    stopGame();
+
+
+    hitCount = 0;
+
+    missCount = 0;
+
+    chartIndex = 0;
+
+    activeNotes = [];
+
+
+    /*
+     * 입력 잠금 초기화
+     */
+
+    inputLockedUntil = 0;
+
+
+    noteLayer.innerHTML = "";
+
+    scoreElement.textContent =
+        "0";
+
+
+    chart =
+        generateChart(
+            currentSong
+        );
+
+
+    totalNotes =
+        chart.length;
+
+
+    audio.src =
+        currentSong.file;
+
+    audio.load();
+
+}
+
+
+/* ==================================================
+   차트 생성
+================================================== */
+
+function generateChart(song) {
+
+    const notes = [];
+
+    const beat =
+        60 / song.bpm;
+
+
+    let time =
+        song.offset + 1;
+
+
+    let id = 0;
+
+    let previousLane = -1;
+
+
+    while(
+        time <
+        song.duration - 1.5
+    ) {
+
+        const progress =
+            time /
+            song.duration;
+
+
+        let probability =
+            0.68;
+
+
+        if(progress > 0.20)
+            probability = 0.76;
+
+        if(progress > 0.40)
+            probability = 0.84;
+
+        if(progress > 0.60)
+            probability = 0.92;
+
+        if(progress > 0.80)
+            probability = 1.0;
+
+
+        let lane =
+            Math.floor(
+                Math.random() * 4
+            );
+
+
+        if(
+            lane === previousLane
+        ) {
+
+            lane =
+                (lane + 1) % 4;
+
+        }
+
+
+        if(
+            Math.random() <
+            probability
+        ) {
+
+            notes.push({
+
+                id:
+                    id++,
+
+                time:
+                    Number(
+                        time.toFixed(3)
+                    ),
+
+                lane:
+                    lane,
+
+                type:
+                    "normal"
+
+            });
+
+
+            previousLane =
+                lane;
+
+
+            if(
+                progress > 0.55 &&
+                Math.random() < 0.22
+            ) {
+
+                let secondLane =
+                    Math.floor(
+                        Math.random() * 4
+                    );
+
+
+                if(
+                    secondLane === lane
+                ) {
+
+                    secondLane =
+                        (secondLane + 1) % 4;
+
+                }
+
+
+                notes.push({
+
+                    id:
+                        id++,
+
+                    time:
+                        Number(
+                            (
+                                time +
+                                beat / 2
+                            ).toFixed(3)
+                        ),
+
+                    lane:
+                        secondLane,
+
+                    type:
+                        "normal"
+
+                });
+
+            }
+
+        }
+
+
+        let interval =
+            beat;
+
+
+        if(progress > 0.25)
+            interval =
+                beat * 0.90;
+
+        if(progress > 0.45)
+            interval =
+                beat * 0.82;
+
+        if(progress > 0.65)
+            interval =
+                beat * 0.72;
+
+        if(progress > 0.82)
+            interval =
+                beat * 0.62;
+
+
+        time +=
+            interval;
+
+    }
+
+
+    notes.sort(
+        (a, b) =>
+            a.time - b.time
+    );
+
+
+    return notes;
+
+}
+
+
+/* ==================================================
+   속도
+================================================== */
+
+function getTravelTime(
+    noteTime
+) {
+
+    const progress =
+        noteTime /
+        currentSong.duration;
+
+
+    let travel =
+        BASE_TRAVEL;
+
+
+    if(progress > 0.25)
+        travel *= 0.92;
+
+    if(progress > 0.45)
+        travel *= 0.83;
+
+    if(progress > 0.65)
+        travel *= 0.72;
+
+    if(progress > 0.82)
+        travel *= 0.62;
+
+
+    return travel;
+
+}
+
+
+/* ==================================================
+   START
+================================================== */
+
+document
+    .getElementById(
+        "startButton"
+    )
+    .addEventListener(
+        "click",
+        startGame
+    );
+
+
+async function startGame() {
+
+    resetGame();
+
+    startOverlay.style.display =
+        "none";
+
+
+    await countdownStart();
+
+
+    try {
+
+        audio.currentTime =
+            0;
+
+        await audio.play();
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+        alert(
+            "음악을 재생할 수 없습니다.\n\n" +
+            "music 폴더의 MP3 파일 이름을 확인해주세요."
+        );
+
+
+        startOverlay.style.display =
+            "flex";
+
+        return;
+
+    }
+
+
+    running = true;
+
+
+    animationFrame =
+        requestAnimationFrame(
+            gameLoop
+        );
+
+}
+
+
+/* ==================================================
+   카운트다운
+================================================== */
+
+function countdownStart() {
+
+    return new Promise(
+        resolve => {
+
+            let number = 3;
+
+
+            function run() {
+
+                if(number > 0) {
+
+                    countdown.textContent =
+                        number;
+
+                    number--;
+
+                    setTimeout(
+                        run,
+                        600
+                    );
+
+                }
+
+                else {
+
+                    countdown.textContent =
+                        "START!";
+
+
+                    setTimeout(
+                        () => {
+
+                            countdown.textContent =
+                                "";
+
+                            resolve();
+
+                        },
+                        450
+                    );
+
+                }
+
+            }
+
+
+            run();
+
+        }
+    );
+
+}
+
+
+/* ==================================================
+   GAME LOOP
+================================================== */
+
+function gameLoop() {
+
+    if(!running)
+        return;
+
+
+    const time =
+        audio.currentTime;
+
+
+    spawnNotes(time);
+
+    updateNotes(time);
+
+
+    animationFrame =
+        requestAnimationFrame(
+            gameLoop
+        );
+
+}
+
+
+/* ==================================================
+   노트 생성
+================================================== */
+
+function spawnNotes(time) {
+
+    while(
+        chartIndex <
+        chart.length
+    ) {
+
+        const data =
+            chart[chartIndex];
+
+
+        const travel =
+            getTravelTime(
+                data.time
+            );
+
+
+        const spawnTime =
+            data.time -
+            travel;
+
+
+        if(
+            time <
+            spawnTime
+        ) {
+
+            break;
+
+        }
+
+
+        createNote(data);
+
+        chartIndex++;
+
+    }
+
+}
+
+
+/* ==================================================
+   노트 DOM
+================================================== */
+
+function createNote(data) {
+
+    const note =
+        document.createElement(
+            "div"
+        );
+
+
+    note.className =
+        "normalNote lane" +
+        data.lane;
+
+
+    note.dataset.id =
+        data.id;
+
+
+    note.dataset.lane =
+        data.lane;
+
+
+    note.dataset.time =
+        data.time;
+
+
+    note.noteData =
+        data;
+
+
+    const playArea =
+        document.querySelector(
+            ".playArea"
+        );
+
+
+    const laneWidth =
+        playArea.clientWidth / 4;
+
+
+    note.style.left =
+        (
+            laneWidth *
+            data.lane +
+            laneWidth / 2
+        ) + "px";
+
+
+    noteLayer.appendChild(
+        note
+    );
+
+
+    note.hit = false;
+
+
+    activeNotes.push(
+        note
+    );
+
+}
+
+
+/* ==================================================
+   노트 이동
+================================================== */
+
+function updateNotes(time) {
+
+    const judgeLine =
+        document.querySelector(
+            ".judgeLine"
+        );
+
+
+    const startY =
+        -90;
+
+
+    const judgeY =
+        judgeLine.offsetTop -
+        14;
+
+
+    for(
+        const note of
+        [...activeNotes]
+    ) {
+
+        if(note.hit)
+            continue;
+
+
+        const data =
+            note.noteData;
+
+
+        const travel =
+            getTravelTime(
+                data.time
+            );
+
+
+        const spawnTime =
+            data.time -
+            travel;
+
+
+        const progress =
+            (
+                time -
+                spawnTime
+            ) /
+            travel;
+
+
+        const y =
+            startY +
+            (
+                judgeY -
+                startY
+            ) *
+            progress;
+
+
+        note.style.top =
+            y + "px";
+
+
+        /*
+         * 판정선을 지나간 경우 MISS
+         */
+
+        if(
+            time -
+            data.time >
+            HIT_WINDOW
+        ) {
+
+            makeMiss(
+                note
+            );
+
+        }
+
+    }
+
+}
+
+
+/* ==================================================
+   키
+================================================== */
+
+const KEY_TO_LANE = {
+
+    a: 0,
+
+    s: 1,
+
+    d: 2,
+
+    f: 3
+
+};
+
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if(!running)
+            return;
+
+
+        /*
+         * MISS 후 0.2초 동안
+         * A/S/D/F 입력 차단
+         */
+
+        if(
+            Date.now() <
+            inputLockedUntil
+        ) {
+
+            return;
+
+        }
+
+
+        const key =
+            event.key.toLowerCase();
+
+
+        if(
+            !(key in KEY_TO_LANE)
+        )
+            return;
+
+
+        event.preventDefault();
+
+
+        /*
+         * 키를 계속 누르고 있는 동안
+         * 연속 MISS 방지
+         */
+
+        if(event.repeat)
+            return;
+
+
+        const lane =
+            KEY_TO_LANE[key];
+
+
+        pressVisual(
+            lane
+        );
+
+
+        judgeLane(
+            lane
+        );
+
+    }
+);
+
+
+document.addEventListener(
+    "keyup",
+    event => {
+
+        const key =
+            event.key.toLowerCase();
+
+
+        if(
+            !(key in KEY_TO_LANE)
+        )
+            return;
+
+
+        releaseVisual(
+            KEY_TO_LANE[key]
+        );
+
+    }
+);
+
+
+/* ==================================================
+   레인 판정
+================================================== */
+
+function judgeLane(lane) {
+
+    const now =
+        audio.currentTime;
+
+
+    let closest =
+        null;
+
+
+    let closestDistance =
+        Infinity;
+
+
+    for(
+        const note of activeNotes
+    ) {
+
+        if(note.hit)
+            continue;
+
+
+        if(
+            note.noteData.lane !==
+            lane
+        )
+            continue;
+
+
+        const distance =
+            Math.abs(
+                note.noteData.time -
+                now
+            );
+
+
+        if(
+            distance <
+            closestDistance
+        ) {
+
+            closestDistance =
+                distance;
+
+            closest =
+                note;
+
+        }
+
+    }
+
+
+    /*
+     * 해당 레인에
+     * 판정 가능한 음표가 없음
+     */
+
+    if(
+        !closest ||
+        closestDistance >
+        HIT_WINDOW
+    ) {
+
+        missCount++;
+
+
+        /*
+         * MISS 발생
+         * → 0.2초 동안 입력 잠금
+         */
+
+        inputLockedUntil =
+            Date.now() +
+            MISS_INPUT_LOCK;
+
+
+        updateScore();
+
+        showJudge(
+            "MISS",
+            "miss"
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * HIT
+     */
+
+    closest.hit =
+        true;
+
+
+    hitCount++;
+
+
+    updateScore();
+
+
+    showJudge(
+        "HIT",
+        "hit"
+    );
+
+
+    removeNote(
+        closest
+    );
+
+}
+
+
+/* ==================================================
+   MISS
+================================================== */
+
+function makeMiss(note) {
+
+    if(note.hit)
+        return;
+
+
+    note.hit =
+        true;
+
+
+    missCount++;
+
+
+    /*
+     * 노트를 놓쳐서 MISS가 된 경우에도
+     * 0.2초 동안 입력 잠금
+     */
+
+    inputLockedUntil =
+        Date.now() +
+        MISS_INPUT_LOCK;
+
+
+    updateScore();
+
+
+    showJudge(
+        "MISS",
+        "miss"
+    );
+
+
+    removeNote(
+        note
+    );
+
+}
+
+
+/* ==================================================
+   노트 제거
+================================================== */
+
+function removeNote(note) {
+
+    const index =
+        activeNotes.indexOf(
+            note
+        );
+
+
+    if(index !== -1) {
+
+        activeNotes.splice(
+            index,
+            1
+        );
+
+    }
+
+
+    if(
+        note.parentNode
+    ) {
+
+        note.parentNode.removeChild(
+            note
+        );
+
+    }
+
+}
+
+
+/* ==================================================
+   점수
+================================================== */
+
+function updateScore() {
+
+    const score =
+        totalNotes === 0
+        ? 0
+        : Math.floor(
+            (
+                hitCount /
+                totalNotes
+            ) * 100
+        );
+
+
+    scoreElement.textContent =
+        score;
+
+}
+
+
+/* ==================================================
+   버튼 효과
+================================================== */
+
+function pressVisual(lane) {
+
+    const key =
+        document.querySelector(
+            `.key[data-lane="${lane}"]`
+        );
+
+
+    if(key) {
+
+        key.classList.add(
+            "active"
+        );
+
+    }
+
+}
+
+
+function releaseVisual(lane) {
+
+    const key =
+        document.querySelector(
+            `.key[data-lane="${lane}"]`
+        );
+
+
+    if(key) {
+
+        key.classList.remove(
+            "active"
+        );
+
+    }
+
+}
+
+
+/* ==================================================
+   HIT / MISS
+================================================== */
+
+function showJudge(
+    text,
+    type
+) {
+
+    judgeText.textContent =
+        text;
+
+
+    judgeText.className =
+        "judgeText " +
+        type;
+
+
+    void judgeText.offsetWidth;
+
+
+    judgeText.classList.add(
+        "show"
+    );
+
+}
+
+
+/* ==================================================
+   음악 종료
+================================================== */
+
+audio.addEventListener(
+    "ended",
+    finishGame
+);
+
+
+function finishGame() {
+
+    if(!running)
+        return;
+
+
+    running = false;
+
+
+    if(animationFrame) {
+
+        cancelAnimationFrame(
+            animationFrame
+        );
+
+        animationFrame =
+            null;
+
+    }
+
+
+    /*
+     * 아직 판정되지 않은 음표는
+     * 전부 MISS
+     */
+
+    const remaining =
+        [...activeNotes];
+
+
+    for(
+        const note of remaining
+    ) {
+
+        if(!note.hit) {
+
+            note.hit =
+                true;
+
+            missCount++;
+
+        }
+
+    }
+
+
+    activeNotes = [];
+
+
+    noteLayer.innerHTML =
+        "";
+
+
+    updateScore();
+
+
+    const finalScore =
+        Math.floor(
+            (
+                hitCount /
+                totalNotes
+            ) * 100
+        );
+
+
+    showResult(
+        finalScore
+    );
+
+}
+
+
+/* ==================================================
+   결과
+================================================== */
+
+function showResult(score) {
+
+    game.classList.remove(
+        "active"
+    );
+
+    result.classList.add(
+        "active"
+    );
+
+
+    const clear =
+        score === 100;
+
+
+    const resultTitle =
+        document.getElementById(
+            "resultTitle"
+        );
+
+
+    resultTitle.textContent =
+        clear
+        ? "CLEAR"
+        : "FAILED";
+
+
+    resultTitle.style.color =
+        clear
+        ? "white"
+        : "#ff2525";
+
+
+    document.getElementById(
+        "resultSong"
+    ).textContent =
+        currentSong.title +
+        " · " +
+        currentSong.artist;
+
+
+    document.getElementById(
+        "finalScore"
+    ).textContent =
+        score +
+        " / 100";
+
+
+    document.getElementById(
+        "hitCount"
+    ).textContent =
+        hitCount;
+
+
+    document.getElementById(
+        "missCount"
+    ).textContent =
+        missCount;
+
+
+    document.getElementById(
+        "rewardTitle"
+    ).textContent =
+        clear
+        ? "CLEAR REWARD"
+        : "NO REWARD";
+
+
+    document.getElementById(
+        "rewardText"
+    ).textContent =
+        clear
+        ? "모든 음표를 성공했습니다!"
+        : "100점을 만들어야 클리어할 수 있습니다.";
+
+}
+
+
+/* ==================================================
+   게임 정지
+================================================== */
+
+function stopGame() {
+
+    running =
+        false;
+
+
+    if(animationFrame) {
+
+        cancelAnimationFrame(
+            animationFrame
+        );
+
+        animationFrame =
+            null;
+
+    }
+
+
+    audio.pause();
+
+
+    try {
+
+        audio.currentTime =
+            0;
+
+    }
+
+    catch(error) {}
+
+
+    activeNotes =
+        [];
+
+
+    /*
+     * 게임 정지 시
+     * 입력 잠금도 초기화
+     */
+
+    inputLockedUntil =
+        0;
+
+
+    noteLayer.innerHTML =
+        "";
+
+
+    document
+        .querySelectorAll(".key")
+        .forEach(
+            key => {
+
+                key.classList.remove(
+                    "active"
+                );
+
+            }
+        );
+
+}
+
+
+/* ==================================================
+   뒤로가기
+================================================== */
+
+document
+    .getElementById(
+        "backButton"
+    )
+    .addEventListener(
+        "click",
+        () => {
+
+            stopGame();
+
+            game.classList.remove(
+                "active"
+            );
+
+            menu.classList.add(
+                "active"
+            );
+
+        }
+    );
+
+
+/* ==================================================
+   다시 하기
+================================================== */
+
+document
+    .getElementById(
+        "retryButton"
+    )
+    .addEventListener(
+        "click",
+        () => {
+
+            result.classList.remove(
+                "active"
+            );
+
+            game.classList.add(
+                "active"
+            );
+
+            startOverlay.style.display =
+                "flex";
+
+            resetGame();
+
+        }
+    );
+
+
+/* ==================================================
+   곡 선택
+================================================== */
+
+document
+    .getElementById(
+        "menuButton"
+    )
+    .addEventListener(
+        "click",
+        () => {
+
+            stopGame();
+
+            result.classList.remove(
+                "active"
+            );
+
+            menu.classList.add(
+                "active"
+            );
+
+        }
+    );
+
+</script>
+
+</body>
+</html>
